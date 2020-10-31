@@ -18,19 +18,26 @@ project(anki_vector_ros)
 ##     * add a exec_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
+
+find_package(catkin REQUIRED COMPONENTS rospy std_msgs message_generation)
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
 
 
-catkin_package()
-catkin_package(CATKIN_DEPENDS message_runtime)
 
-##   * uncomment the add_*_files sections below as needed
-##     and list every .msg/.srv/.action file to be processed
-##   * uncomment the generate_messages entry below
-##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
+add_message_files (
+   FILES
+   Dist.msg
+)
+
+generate_messages (
+   DEPENDENCIES
+   std_msgs
+)
+
+catkin_package()
+catkin_package(CATKIN_DEPENDS message_runtime)
 
 
 ## Generate services in the 'srv' folder

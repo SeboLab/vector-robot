@@ -1,0 +1,3 @@
+<launch>
+	<node name="vector_core" pkg="anki_vector_ros" type="anki_vector_core.py" output="screen" />
+</launch>

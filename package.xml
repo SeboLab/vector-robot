@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package>
+	<name>anki_vector_ros</name>
+	<version>0.1.0</version>
+	<description>ROS package for interfacing with the Anki Vector robot</description>
+
+	<maintainer email="spencerng@uchicago.edu">Spencer Ng</maintainer>
+	<maintainer email="sarahsebo@uchicago.edu">Sarah Sebo</maintainer>
+	<license>BSD</license>
+
+	<buildtool_depend>catkin</buildtool_depend>
+
+	<build_depend>rospy</build_depend>
+	<build_depend>geometry_msgs</build_depend>
+	<build_depend>message_generation</build_depend>
+
+	<run_depend>message_runtime</run_depend>
+	<run_depend>rospy</run_depend>
+	<run_depend>geometry_msgs</run_depend>
+
+</package>

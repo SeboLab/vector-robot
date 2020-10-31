@@ -5,6 +5,15 @@ ROS wrapper and startup code for Vector
 ## Usage
 
 1. Install ROS and `rospy`
-2. [Complete the Linux SDK setup](https://developer.anki.com/vector/docs/install-linux.html) and authentication with the robot
-3. You may need to install additional dependencies. Some of these are found in `requirements.txt`
-3. More coming soon...
+2. [Setup the Vector Linux SDK](https://developer.anki.com/vector/docs/install-linux.html)
+3. Complete the Vector robot authentication process with `python3 -m anki_vector.configure`
+4. Clone this repository into your Catkin workspace
+5. If needed, install additional dependencies. Run `pip3 install -r requirements.txt`
+6. Install this package with `catkin_make install` (from the root of your workspace)
+7. Launch a barbones instance of the Vector node with `roslaunch launch/vector_core.launch`. You may also wish to create your own `.launch` files incorporating your custom nodes
+8. More coming soon...
+
+## Topics
+
+* `/accel`: A `Vector3` reading of the robot's XYZ acceleration
+* `/gyro`: A `Vector3` reading of the robot's XYZ tilt

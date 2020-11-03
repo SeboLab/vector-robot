@@ -1,0 +1,10 @@
+int32 x
+int32 y
+int32 z
+int32 q0
+int32 q1
+int32 q2
+int32 q3
+int32 q4
+int32 angle_z
+int16 origin_id

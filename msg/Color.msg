@@ -1,0 +1,2 @@
+float64 hue
+float64 saturation

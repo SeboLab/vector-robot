@@ -6,11 +6,12 @@ into different nodes/classes based on functionality
 """
 
 import rospy
-from std_msgs.msg import String, Int16, Bool
+from std_msgs.msg import String, Int16
 from geometry_msgs.msg import Vector3
-from anki_vector_ros.msg import Dist
 
 import anki_vector
+
+from behavior import Behavior
 
 
 class VectorNode:
@@ -20,11 +21,7 @@ class VectorNode:
         self.robot = anki_vector.Robot()
         self.robot.connect()
 
-        self.accel_pub = rospy.Publisher("/accel", Vector3, queue_size=1)
-        self.gyro_pub = rospy.Publisher("/gyro", Vector3, queue_size=1)
-
-        # If we need any of the following to have responses (e.g. success/failure indicator),
-        # we can transition them into services instead of topics
+        self.behavior_control = Behavior(self.robot)
 
         # Animations
         # Could add list of animation names as topic, but not necessary for dev use
@@ -38,14 +35,9 @@ class VectorNode:
         self.audio_vol_sub = rospy.Subscriber("/audio/vol", Int16, self.set_vol)
         self.audio_vol = 100
 
-        # Behavior
-        self.drive_charger_sub = rospy.Subscriber(
-            "/behavior/drive_charger", Bool, self.drive_charger
-        )
-        self.drive_straight_sub = rospy.Subscriber(
-            "/behavior/drive_straight", Dist, self.drive_straight
-        )
-        # TODO: Finish writing subscribers for behavior actions
+        # Info publishing
+        self.accel_pub = rospy.Publisher("/accel", Vector3, queue_size=1)
+        self.gyro_pub = rospy.Publisher("/gyro", Vector3, queue_size=1)
 
         while not rospy.is_shutdown():
             # Publish sensor data
@@ -67,16 +59,6 @@ class VectorNode:
 
     def set_vol(self, vol):
         self.audio_vol = vol
-
-    def drive_charger(self, bool_val):
-        # True to drive on, false to drive off
-        if bool_val:
-            self.robot.behavior.drive_on_charger()
-        else:
-            self.robot.behavior.drive_off_charger()
-
-    def drive_straight(self, msg):
-        self.robot.behavior.drive_straight(msg.distance, msg.speed)
 
 
 if __name__ == "__main__":

@@ -18,6 +18,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files (
    FILES
    Dist.msg
+   Color.msg
+   Pose.msg
 )
 
 generate_messages (

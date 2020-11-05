@@ -1,0 +1,5 @@
+float32 distance
+bool found_object
+bool is_lift_in_fov
+float32 signal_quality
+bool unobstructed

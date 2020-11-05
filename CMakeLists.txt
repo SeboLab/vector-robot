@@ -20,6 +20,9 @@ add_message_files (
    Dist.msg
    Color.msg
    Pose.msg
+   Proximity.msg
+   RobotStatus.msg
+   Touch.msg
 )
 
 generate_messages (

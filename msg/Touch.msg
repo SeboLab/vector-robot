@@ -1,0 +1,2 @@
+bool is_being_touched
+int16 raw_touch_value

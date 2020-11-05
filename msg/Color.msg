@@ -1,2 +1,3 @@
-float64 hue
-float64 saturation
+int32 red
+int32 green
+int32 blue

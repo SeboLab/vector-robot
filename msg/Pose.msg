@@ -8,3 +8,5 @@ int32 q3
 int32 q4
 int32 angle_z
 int16 origin_id
+float32 angle
+float32 pitch

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 
 # Credit to
 # https://github.com/betab0t/vector_ros_driver/blob/develop/src/vector_ros_driver/camera.py

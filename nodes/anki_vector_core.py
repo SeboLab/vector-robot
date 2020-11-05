@@ -14,17 +14,16 @@ import anki_vector
 
 from behavior import Behavior
 from camera import Camera
-from anki_vector_ros.msg import Pose
-
-
-def create_camera_thread(robot):
-    Camera(robot)
+from screen import Screen
+from anki_vector_ros.msg import Pose, Proximity, RobotStatus, Touch
 
 
 class VectorNode:
-    def __init__(self):
+    def __init__(self, publish_rate=10):
         # There are lots of parameters here for the robot
         # Perhaps we'll add these in a custom config file
+        self.rate = rospy.Rate(publish_rate)
+
         self.robot = anki_vector.Robot()
         self.robot.connect()
 
@@ -34,7 +33,8 @@ class VectorNode:
         self.async_robot.connect()
 
         # Needs to be async due to continuous publishing
-        Thread(target=create_camera_thread, args=(self.async_robot)).start()
+        Thread(target=self.create_camera_thread).start()
+        Screen(self.robot)
 
         # Animations
         # Could add list of animation names as topic, but not necessary for dev use
@@ -62,20 +62,29 @@ class VectorNode:
         self.carry_object_pub = Publisher("/carry_object", Int16)
         self.angle_pub = Publisher("/head_angle", Float32, queue_size=1)
         self.tracking_pub = Publisher("/head_tracking_object", Int16, queue_size=1)
+
+        # This is in mm/sec
         self.left_wheel_pub = Publisher("/wheel_speed/left", Float32, queue_size=1)
         self.right_wheel_pub = Publisher("/wheel_speed/right", Float32, queue_size=1)
+
+        # This is in mm
         self.lift_height_pub = Publisher("/lift_height", Float32, queue_size=1)
         self.localized_pub = Publisher("/localized_object", Int16)
+
         self.pose_pub = Publisher("/pose", Pose)
-        self.pose_angle_pub = Publisher("/pose/angle", Float32)
-        self.pose_pitch_pub = Publisher("/pose/pitch", Float32)
 
-        # TODO handle NavMapComponents
-        # TODO continue with ProximityComponent in
-        # https://developer.anki.com/vector/docs/generated/anki_vector.robot.html#module-anki_vector.robot
-        # TODO create helper function to translation between anki_vector data object
-        # and a ROS message
+        self.proximity_pub = Publisher("/proximity", Proximity)
+        self.status_pub = Publisher("/status", RobotStatus)
 
+        self.touch_pub = Publisher("/touch", Touch)
+
+        # TODO handle NavMapComponents, VisionComponent
+        # World of the robot is best represented as Python objects; we can create
+        # custom routines to represent LightCubes and other objects via IDs
+
+        self.publish_sensor_feed()
+
+    def publish_sensor_feed(self):
         while not rospy.is_shutdown():
             # Publish sensor/motor data
             self.accel_pub.publish(self.robot.accel)
@@ -84,46 +93,70 @@ class VectorNode:
             self.tracking_pub.publish(self.robot.head_tracking_object_id)
             self.left_wheel_pub.publish(self.robot.left_wheel_speed_mmps)
             self.right_wheel_pub.publish(self.robot.right_wheel_speed_mmps)
+
             self.lift_height_pub.publish(self.robot.lift_height_mm)
             self.localized_pub.publish(self.robot.localized_to_object_id)
             self.carry_object_pub.publish(self.robot.carrying_object_id)
 
-            pose_msg = Pose()
-            for attr in dir(self.robot.pose):
-                setattr(pose_msg, attr, getattr(self.robot.pose, attr))
-
+            pose_msg = populate_message(Pose(), self.robot.pose)
+            # Note: these values are given in radians
+            pose_msg.angle = self.robot.pose_angle_rad
+            pose_msg.pitch = self.robot.pose_pitch_rad
             self.pose_pub.publish(pose_msg)
-            self.pose_angle_pub.publish(self.robot.pose_angle_rad)
-            self.pose_pitch_pub.publish(self.robot.pose_pitch_rad)
+
+            proximity_obj = self.robot.proximity.last_sensor_reading
+            proximity_msg = populate_message(Proximity(), proximity_obj)
+            proximity_msg.distance = proximity_obj.distance.distance_mm
+            self.proximity_pub.publish(proximity_msg)
+
+            status_msg = populate_message(RobotStatus(), self.robot.status)
+            self.status_pub.publish(status_msg)
+
+            touch_msg = populate_message(Touch(), self.robot.touch.last_sensor_reading)
+            self.touch_pub.publish(touch_msg)
+
+            self.rate.sleep()
+
+    def create_camera_thread(self):
+        Camera(self.robot)
 
     def shutdown(self):
         print("Vector Robot shutting down...")
         self.robot.disconnect()
 
     def play_anim(self, str_data):
-        self.robot.anim.play_animation(str_data)
+        self.robot.anim.play_animation(str_data.data)
 
     def play_anim_trigger(self, str_data):
-        self.robot.anim.play_animation_trigger(str_data)
+        self.robot.anim.play_animation_trigger(str_data.data)
 
     def play_wav(self, str_data):
-        self.robot.audio.stream_wav_file(str_data, self.audio_vol)
+        self.robot.audio.stream_wav_file(str_data.data, self.audio_vol)
 
     def set_vol(self, vol):
-        self.audio_vol = vol
+        self.audio_vol = vol.data
 
     def set_head_motor(self, speed):
-        self.robot.motors.set_head_motor(speed)
+        self.robot.motors.set_head_motor(speed.data)
 
     def set_lift_motor(self, speed):
-        self.robot.motors.set_lift_motor(speed)
+        self.robot.motors.set_lift_motor(speed.data)
 
     def set_wheel_motors(self, speed):
-        self.robot.motors.set_wheel_motors(speed, speed)
+        self.robot.motors.set_wheel_motors(speed.data, speed.data)
 
     def stop_motors(self, stop):
-        if stop:
+        if stop.data:
             self.robot.motors.stop_all_motors()
+
+
+def populate_message(message, vector_obj):
+    for attr in dir(vector_obj):
+        if not hasattr(message, attr):
+            continue
+        setattr(message, attr, getattr(vector_obj))
+
+    return message
 
 
 if __name__ == "__main__":

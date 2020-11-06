@@ -25,12 +25,12 @@ class Sensors:
 
         # This is in mm
         self.lift_height_pub = Publisher("/lift_height", Float32, queue_size=1)
-        self.localized_pub = Publisher("/localized_object", Int16)
+        self.localized_pub = Publisher("/localized_object", Int16, queue_size=1)
 
-        self.pose_pub = Publisher("/pose", Pose)
-        self.proximity_pub = Publisher("/proximity", Proximity)
-        self.status_pub = Publisher("/status", RobotStatus)
-        self.touch_pub = Publisher("/touch", Touch)
+        self.pose_pub = Publisher("/pose", Pose, queue_size=1)
+        self.proximity_pub = Publisher("/proximity", Proximity, queue_size=1)
+        self.status_pub = Publisher("/status", RobotStatus, queue_size=1)
+        self.touch_pub = Publisher("/touch", Touch, queue_size=1)
 
         self.publish_sensor_feed()
 

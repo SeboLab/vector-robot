@@ -54,7 +54,7 @@ class VectorNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node("vector")
+    rospy.init_node("vector_ros")
 
     vector = VectorNode()
     rospy.spin()

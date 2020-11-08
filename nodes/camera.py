@@ -30,5 +30,4 @@ class Camera:
             image.header.frame_id = self.image_frame_id
             self.image_publisher.publish(image)
 
-            # make sure to publish at required rate
             self.rate.sleep()

@@ -48,7 +48,7 @@ class Sensors:
             self.localized_pub.publish(self.robot.localized_to_object_id)
             self.carry_object_pub.publish(self.robot.carrying_object_id)
 
-            pose_msg = populate_message(Pose(), self.robot.pose)
+            pose_msg = populate_message(Pose(), self.robot.pose.to_proto_pose_struct())
             # Note: these values are given in radians
             pose_msg.angle = self.robot.pose_angle_rad
             pose_msg.pitch = self.robot.pose_pitch_rad

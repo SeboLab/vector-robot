@@ -1,4 +1,4 @@
 <launch>
-	<node name="vector" pkg="anki_vector_ros" type="anki_vector_core.py" output="screen" />
+	<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py" output="screen" />
 	<node name="vector_hello_world" pkg="anki_vector_ros" type="hello_world_move.py" output="screen" />
 </launch>

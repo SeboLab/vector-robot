@@ -15,7 +15,7 @@ class Sensors:
         # Info publishing
         self.accel_pub = Publisher("/accel", Vector3, queue_size=1)
         self.gyro_pub = Publisher("/gyro", Vector3, queue_size=1)
-        self.carry_object_pub = Publisher("/carry_object", Int16)
+        self.carry_object_pub = Publisher("/carry_object", Int16, queue_size=1)
         self.angle_pub = Publisher("/head_angle", Float32, queue_size=1)
         self.tracking_pub = Publisher("/head_tracking_object", Int16, queue_size=1)
 
@@ -37,8 +37,8 @@ class Sensors:
     def publish_sensor_feed(self):
         while not rospy.is_shutdown():
             # Publish sensor/motor data
-            self.accel_pub.publish(self.robot.accel)
-            self.gyro_pub.publish(self.robot.gyro)
+            self.accel_pub.publish(**convert_vector3(self.robot.accel))
+            self.gyro_pub.publish(**convert_vector3(self.robot.gyro))
             self.angle_pub.publish(self.robot.head_angle_rad)
             self.tracking_pub.publish(self.robot.head_tracking_object_id)
             self.left_wheel_pub.publish(self.robot.left_wheel_speed_mmps)
@@ -68,10 +68,22 @@ class Sensors:
             self.rate.sleep()
 
 
+def convert_vector3(vector3_obj):
+    attr_dict = dict()
+    for attr in dir(vector3_obj):
+        if attr not in ("x", "y", "z"):
+            continue
+        attr_dict[attr] = getattr(vector3_obj, attr)
+
+    return attr_dict
+
+
 def populate_message(message, vector_obj):
     for attr in dir(vector_obj):
         if not hasattr(message, attr):
             continue
-        setattr(message, attr, getattr(vector_obj))
+        if "__" in attr:
+            continue
+        setattr(message, attr, getattr(vector_obj, attr))
 
     return message

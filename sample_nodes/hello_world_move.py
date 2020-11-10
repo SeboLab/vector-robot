@@ -3,22 +3,23 @@ from time import sleep
 
 import rospy
 from rospy import Publisher
-from std_msgs.msg import String, Float32
+from std_msgs.msg import Float32
 
 """
-Sample program to make Vector move and say "Hello"
+Sample program to make Vector move
 """
 
 
 def main():
-    speak_pub = Publisher("/audio/play", String, queue_size=1)
-    speak_pub.publish("Hello!")
-
+    print("Setting up publishers")
     move_pub = Publisher("/motors/wheels", Float32, queue_size=1)
-    move_pub.publish(50.0)
 
+    # Delay to ensure all topics are set up
+    sleep(12.0)
+
+    print("Executing commands")
+    move_pub.publish(300.0)
     sleep(3.0)
-
     move_pub.publish(0.0)
 
 

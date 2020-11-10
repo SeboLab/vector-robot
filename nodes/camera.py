@@ -5,7 +5,7 @@
 
 import rospy
 import cv_bridge
-import numpy
+import numpy as np
 
 from sensor_msgs.msg import Image
 
@@ -13,7 +13,7 @@ from sensor_msgs.msg import Image
 class Camera:
     def __init__(self, async_robot, publish_rate=10, image_frame_id="camera_link"):
         self.async_robot = async_robot
-        async_robot.camera.init_camera_feed()
+        self.async_robot.camera.init_camera_feed()
         self.rate = rospy.Rate(publish_rate)
         self.image_frame_id = image_frame_id
         self.image_publisher = rospy.Publisher("/camera", Image, queue_size=1)
@@ -22,9 +22,14 @@ class Camera:
     def publish_camera_feed(self):
         bridge = cv_bridge.CvBridge()
 
-        while not rospy.is_shutdown():
+        while (
+            not rospy.is_shutdown()
+            and self.async_robot.camera.image_streaming_enabled()
+        ):
+            print(np.asarray(self.async_robot.camera.latest_image.raw_image))
             image = bridge.cv2_to_imgmsg(
-                numpy.asarray(self.async_robot.camera.latest_image), encoding="rgb8"
+                np.asarray(self.async_robot.camera.latest_image.raw_image),
+                encoding="rgb8",
             )  # convert PIL.Image to ROS Image
             image.header.stamp = rospy.Time.now()
             image.header.frame_id = self.image_frame_id

@@ -23,7 +23,7 @@ class VectorNode:
         self.rate = rospy.Rate(publish_rate)
 
         self.robot = anki_vector.Robot()
-        self.robot.connect()
+        self.robot.connect(timeout=20)
 
         self.behavior_control = Behavior(self.robot)
         self.screen_control = Screen(self.robot)
@@ -31,11 +31,11 @@ class VectorNode:
         self.media_control = Media(self.robot)
         self.vision_control = Vision(self.robot)
 
-        self.async_robot = anki_vector.AsyncRobot(enable_camera_feed=True)
+        self.async_robot = anki_vector.AsyncRobot()
         self.async_robot.connect()
 
         # Needs to be async due to continuous publishing
-        Thread(target=self.create_camera_thread).start()
+        # Thread(target=self.create_camera_thread).start()
         Thread(target=self.create_sensor_thread).start()
 
         # TODO handle NavMapComponents
@@ -43,7 +43,7 @@ class VectorNode:
         # custom routines to represent LightCubes and other objects via IDs
 
     def create_camera_thread(self):
-        Camera(self.async_robot)
+        Camera(self.robot)
 
     def create_sensor_thread(self):
         Sensors(self.robot, self.rate)

@@ -18,7 +18,7 @@ def main():
     sleep(12.0)
 
     print("Executing commands")
-    move_pub.publish(300.0)
+    move_pub.publish(100.0)
     sleep(3.0)
     move_pub.publish(0.0)
 

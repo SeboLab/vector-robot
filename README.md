@@ -8,7 +8,8 @@ ROS wrapper and startup code for Vector
 2. [Setup the Vector Linux SDK](https://developer.anki.com/vector/docs/install-linux.html)
 3. Complete the Vector robot authentication process with `python3 -m anki_vector.configure`
 4. Clone this repository into your Catkin workspace
-5. If needed, install additional dependencies. Run `pip3 install -r requirements.txt`
+5. If needed, install additional dependencies. Run `pip3 install -r requirements.txt`.
+6. You'll also need to install `cv_bridge` from source for Python 3. [This Stack Overflow thread](https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3) is useful for doing so.
 6. Install this package with `catkin_make install` (from the root of your workspace)
 7. Run `source ~/catkin_ws/devel/setup.bash`
 8. Launch a barebones instance of the Vector node with `roslaunch launch/vector_core.launch`. You may also wish to create your own `.launch` files incorporating your custom nodes. See [`hello_world.launch`](./launch/hello_world.launch) for an example.

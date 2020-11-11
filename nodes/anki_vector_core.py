@@ -35,7 +35,7 @@ class VectorNode:
         self.async_robot.connect()
 
         # Needs to be async due to continuous publishing
-        # Thread(target=self.create_camera_thread).start()
+        Thread(target=self.create_camera_thread).start()
         Thread(target=self.create_sensor_thread).start()
 
         # TODO handle NavMapComponents

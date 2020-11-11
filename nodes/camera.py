@@ -26,7 +26,6 @@ class Camera:
             not rospy.is_shutdown()
             and self.async_robot.camera.image_streaming_enabled()
         ):
-            print(np.asarray(self.async_robot.camera.latest_image.raw_image))
             image = bridge.cv2_to_imgmsg(
                 np.asarray(self.async_robot.camera.latest_image.raw_image),
                 encoding="rgb8",

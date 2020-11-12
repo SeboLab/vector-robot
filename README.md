@@ -35,15 +35,15 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/proximity`: `Proximity` message containing information with the robot's proximity to obstacles
 * `/status`: `RobotStatus` message with information about the robot's sensors and position
 * `/touch`: `Touch` message with the state and raw touch value of the robot's touch sensor
-* `/camera`: ROS `Image` representation of the robot's front-facing camera. Use `cv_bridge` to decode this message into a OpenCV-compatible format
+* `/camera`: ROS `Image` representation of the robot's front-facing camera. Use `cv_bridge` to decode this message into a OpenCV-compatible format **[untested]**
 
 ### Write-only topics
 
-* `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `True` value makes the robot drive on its charger, while a `False` value makes it drive off its charger.
+* `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `True` value makes the robot drive on its charger, while a `False` value makes it drive off its charger. **[untested]**
 * `/behavior/drive_straight`: Receives a `Dist` message, making the robot drive straight for the specified distance and speed
-* `/behavior/find_faces`: Receives a `True` message 
-* `/behavior/look_in_place`: Receives a `True` `Bool` message 
-* `/behavior/go_to_pose`: Receives a `Pose` message
+* `/behavior/find_faces`:
+* `/behavior/look_in_place`:
+* `/behavior/go_to_pose`: 
 * `/behavior/place_object_ground`
 * `/behavior/roll_visible_cube`
 * `/behavior/say_text`
@@ -52,9 +52,9 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/behavior/turn_in_place`
 * `/behavior/lift_height`
 * `/behavior/turn_face`
-* `/anim/play`
-* `/anim/play_trigger`
-* `/audio/play`
+* `/anim/play`: Plays an animation, via a `String` message containing an animation name
+* `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
+* `/audio/play`: Receives a `String` message containing the path of a `.wav` file and plays it
 * `/audio/vol`
 * `/motors/head`
 * `/motors/lift`

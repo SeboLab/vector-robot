@@ -5,7 +5,6 @@ float32 q0
 float32 q1
 float32 q2
 float32 q3
-float32 q4
 float32 angle_z
 int16 origin_id
 float32 angle

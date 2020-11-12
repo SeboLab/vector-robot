@@ -41,7 +41,7 @@ class Behavior:
             "/behavior/eye_color", Color, self.set_eye_color
         )
 
-        # Note: These are configured to degrees currently
+        # Note: These are configured to radians currently
         self.head_angle_sub = Subscriber(
             "/behavior/head_angle", Float64, self.set_head_angle
         )
@@ -64,7 +64,9 @@ class Behavior:
             self.robot.behavior.drive_off_charger()
 
     def drive_straight(self, msg):
-        self.robot.behavior.drive_straight(msg.distance, msg.speed)
+        dist = anki_vector.util.distance_mm(msg.distance)
+        speed = anki_vector.util.speed_mmps(msg.speed)
+        self.robot.behavior.drive_straight(dist, speed)
 
     def find_faces(self, find):
         if find.data:
@@ -78,7 +80,11 @@ class Behavior:
 
     def go_to_pose(self, pose):
         pose_props = dict()
+        pose_attrs = ["x", "y", "z", "q0", "q1", "q2", "q3", "origin_id"]
         for attr in dir(pose):
+            if attr not in pose_attrs:
+                continue
+
             pose_props[attr] = getattr(pose, attr)
         pose_obj = anki_vector.util.Pose(**pose_props)
 
@@ -99,14 +105,14 @@ class Behavior:
         self.robot.behavior.set_eye_color(hue, sat)
 
     def set_head_angle(self, angle):
-        angle_obj = anki_vector.util.Angle(degrees=angle.data)
+        angle_obj = anki_vector.util.Angle(radians=angle.data)
         self.robot.behavior.set_head_angle(angle_obj)
 
     def set_lift_height(self, height):
         self.robot.behavior.set_lift_height(height.data)
 
     def turn_in_place(self, angle):
-        angle_obj = anki_vector.util.Angle(degrees=angle.data)
+        angle_obj = anki_vector.util.Angle(radians=angle.data)
         self.robot.behavior.turn_in_place(angle_obj)
 
     def turn_towards_face(self, face_id):

@@ -14,6 +14,8 @@ ROS wrapper and startup code for Vector
 7. Run `source ~/catkin_ws/devel/setup.bash`
 8. Launch a barebones instance of the Vector node with `roslaunch launch/vector_core.launch`. You may also wish to create your own `.launch` files incorporating your custom nodes. See [`hello_world.launch`](./launch/hello_world.launch) for an example.
 
+Note: Ensure you aren't using a VPN before connecting to Vector
+
 ## Topics
 
 The `vector_ros` node creates a series of ROS topics for interfacing with the Anki Vector sensors and outputs. Each topic is designated to either be read from or written to. Please note that this package is currently not feature-complete, particularly for features involving tracking markers and Light Cubes, but feature requests are always appreciated!
@@ -39,19 +41,19 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 
 ### Write-only topics
 
-* `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `True` value makes the robot drive on its charger, while a `False` value makes it drive off its charger. **[untested]**
-* `/behavior/drive_straight`: Receives a `Dist` message, making the robot drive straight for the specified distance and speed
-* `/behavior/find_faces`:
-* `/behavior/look_in_place`:
-* `/behavior/go_to_pose`: 
-* `/behavior/place_object_ground`
-* `/behavior/roll_visible_cube`
-* `/behavior/say_text`
-* `/behavior/eye_color`
-* `/behavior/head_angle`
-* `/behavior/turn_in_place`
-* `/behavior/lift_height`
-* `/behavior/turn_face`
+* `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `true` value makes the robot drive on its charger, while a `false` value makes it drive off its charger.
+* `/behavior/drive_straight`: Receives a custom `Dist` message, making the robot drive straight for the specified distance and speed
+* `/behavior/find_faces`: Receives a `Bool` message with a `true` value to turn in place and look for faces
+* `/behavior/look_in_place`: Receives a `Bool` message with a value of `true` to turn in place
+* `/behavior/go_to_pose`: Receives a `Pose` message and goes to the specified position. Note that the `angle_z`, `angle`, and `pitch` properties are ignored; quarternion values should be used instead.
+* `/behavior/place_object_ground`: **[untested]**
+* `/behavior/roll_visible_cube`: Receives a `Bool` message with a `true` value to roll a LightCube in view
+* `/behavior/say_text`: Receives a `String` message with text to synthesize into speech
+* `/behavior/eye_color`: Receives a custom `Color` message and changes Vector's eye color accordingly
+* `/behavior/head_angle`: Receives a `Float64` message and turns Vector's head to the specified angle, in radians. Range in degrees is [-22, 45], with other values clamped
+* `/behavior/turn_in_place`: Receives a `Float64` message and turns Vector in place by the specified amount, in radians. Positive values turn counterclockwise, while negative values turn clockwise.
+* `/behavior/lift_height`: Receives a `Float64` message and sets Vector's lift to the desired height. This is clamped between 0.0 (representing the bottom position) and 1.0 (representing the top position)
+* `/behavior/turn_face`: **[needs debugging]**
 * `/anim/play`: Plays an animation, via a `String` message containing an animation name
 * `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
 * `/audio/play`: Receives a `String` message containing the path of a `.wav` file and plays it
@@ -66,3 +68,20 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 
 
 ## Custom Messages
+
+* `Dist`: specifies how Vector should drive straight
+  * `distance`: `Float32` value, in mm
+  * `speed`: `Float32` value, in mm/sec. Note that the maximum internal speed is 220 mm/sec.
+* `Pose`: represents Vector's position in the world
+  * `x`: X position in mm (`Float32`)
+  * `y`: Y position in mm (`Float32`)
+  * `z`: Z position in mm (`Float32`)
+  * `q0`, `q1`, `q2`, `q3`: quarternion values representing Vector's rotation
+  * `angle_z`: rotation in the z axis in radians (`Float32`)
+* `Color`: represents an RGB color combination
+  * `red`: int value 0-255
+  * `green`: int value 0-255
+  * `blue`: int value 0-255
+* `Proximity`
+* `RobotStatus`
+* `Touch`

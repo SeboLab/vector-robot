@@ -4,6 +4,7 @@
 This is a placeholder name/format; plan on dividing this up
 into different nodes/classes based on functionality
 """
+import sys
 from threading import Thread
 import rospy
 
@@ -23,7 +24,15 @@ class VectorNode:
         self.rate = rospy.Rate(publish_rate)
 
         self.robot = anki_vector.Robot()
-        self.robot.connect(timeout=20)
+
+        try:
+            self.robot.connect(timeout=20)
+        except anki_vector.exceptions.VectorNotFoundException:
+            print("ERROR: Unable to establish a connection to Vector.")
+            print(
+                "Make sure you're on the same network, and Vector is connected to the internet."
+            )
+            sys.exit(1)
 
         self.behavior_control = Behavior(self.robot)
         self.screen_control = Screen(self.robot)

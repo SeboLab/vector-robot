@@ -1,2 +1,2 @@
-int32 distance
-int32 speed
+float32 distance
+float32 speed

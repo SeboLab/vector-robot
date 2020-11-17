@@ -80,7 +80,7 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
   * `angle_z`: rotation in the z axis in radians (`Float32`)
 * `Color`: represents an RGB color combination
   * `red`: int value 0-255
-  * `green`: int value 0-255
+  * `green`: int value 0-255 
   * `blue`: int value 0-255
 * `Proximity`
 * `RobotStatus`

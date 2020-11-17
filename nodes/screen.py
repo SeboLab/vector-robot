@@ -2,7 +2,6 @@
 from rospy import Subscriber
 from PIL import Image
 from std_msgs.msg import Float32, String
-from cv_bridge import CvBridge
 
 import anki_vector
 from anki_vector_ros.msg import Color
@@ -27,16 +26,14 @@ class Screen:
         # Max width: 184, max height: 96
         img_file = Image.open(image.data)
         w, h = img_file.size
-        resize_ratio = min(184/w, 96/h)
+        resize_ratio = min(184 / w, 96 / h)
         new_size = (int(resize_ratio * w), int(resize_ratio * h))
         img_file = img_file.resize(new_size, Image.ANTIALIAS)
-        
-        canvas = Image.new('RGB', (184, 96), (0, 0, 0))
+
+        canvas = Image.new("RGB", (184, 96), (0, 0, 0))
 
         w, h = new_size
-        tl_corner = ((184 - w)//2, (96 - h)//2)
-            
-            
+        tl_corner = ((184 - w) // 2, (96 - h) // 2)
 
         canvas.paste(img_file, tl_corner)
 

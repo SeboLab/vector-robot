@@ -7,9 +7,6 @@ from rospy import Publisher
 from std_msgs.msg import Float32, String
 from anki_vector_ros.msg import RobotStatus
 
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
-import cv2
 
 """
 Sample program to display an image on Vector's screen

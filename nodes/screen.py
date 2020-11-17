@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from rospy import Subscriber
-from sensor_msgs.msg import Image
-from std_msgs.msg import Float32
+from PIL import Image
+from std_msgs.msg import Float32, String
 from cv_bridge import CvBridge
 
 import anki_vector
@@ -14,7 +14,7 @@ class Screen:
 
         self.display_duration = 5.0
         self.color_sub = Subscriber("/screen/color", Color, self.set_color)
-        self.image_sub = Subscriber("/screen/image", Image, self.set_image)
+        self.image_sub = Subscriber("/screen/image", String, self.set_image)
         self.display_dur_sub = Subscriber(
             "/screen/display_duration", Float32, self.set_display_duration
         )
@@ -24,10 +24,23 @@ class Screen:
         self.robot.screen.set_screen_to_color(color_obj, self.display_duration)
 
     def set_image(self, image):
-        bridge = CvBridge()
-        cv_img = bridge.imgmsg_to_cv2(image, desired_encoding="passthrough")
+        # Max width: 184, max height: 96
+        img_file = Image.open(image.data)
+        w, h = img_file.size
+        resize_ratio = min(184/w, 96/h)
+        new_size = (int(resize_ratio * w), int(resize_ratio * h))
+        img_file = img_file.resize(new_size, Image.ANTIALIAS)
+        
+        canvas = Image.new('RGB', (184, 96), (0, 0, 0))
 
-        screen_data = anki_vector.screen.convert_image_to_screen_data(cv_img)
+        w, h = new_size
+        tl_corner = ((184 - w)//2, (96 - h)//2)
+            
+            
+
+        canvas.paste(img_file, tl_corner)
+
+        screen_data = anki_vector.screen.convert_image_to_screen_data(canvas)
         self.robot.screen.set_screen_with_image_data(screen_data, self.display_duration)
 
     def set_display_duration(self, duration):

@@ -56,14 +56,14 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/behavior/turn_face`: **[needs debugging]**
 * `/anim/play`: Plays an animation, via a `String` message containing an animation name
 * `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
-* `/audio/play`: Receives a `String` message containing the path of a `.wav` file and plays it. Audio format must be 8000-16025 hz, 16 bits, 1 channel.
+* `/audio/play`: Receives a `String` message containing the absolute path of a `.wav` file and plays it. Audio format must be 8000-16025 hz, 16 bits, 1 channel.
 * `/audio/vol`: Recieves an integer 0-100 and sets the audiovolume accordingly. Note that this must be sent before a message is passed onto `/audio/vol` to play a file with the set volume; it does not modify sounds that are currently playing.
 * `/motors/head`: Receives a `Float32` message to set Vector's head motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
 * `/motors/lift`: Receives a `Float32` message to set Vector's lift motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
 * `/motors/wheels`: Receives a `Drive` message and sets the velocity of the left and right treads in mm/sec.
 * `/motors/stop`: Receives a boolean value of `True` to stop all motors
 * `/screen/color`: Receives a `Color` message and sets Vector's screen to the chosen color for the specified duration. Default is 5 seconds.
-* `/screen/image`: Receives an `Image` message and displays it on Vector's screen. **[needs debugging]**
+* `/screen/image`: Receives an `String` message containing the absolute path on an image and displays it on Vector's screen. Resizes image as necessary
 * `/screen/display_duration`: Receives a `Float32` to set the display duration for colors and images on the screen. This must be set before publishing to `/screen` subtopics to take effect.
 
 

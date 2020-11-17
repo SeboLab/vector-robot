@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import colorsys
 from rospy import Subscriber
-from std_msgs.msg import String, Int16, Float64, Bool
+from std_msgs.msg import String, Int16, Float32, Bool
 
 import anki_vector
 
@@ -43,14 +43,14 @@ class Behavior:
 
         # Note: These are configured to radians currently
         self.head_angle_sub = Subscriber(
-            "/behavior/head_angle", Float64, self.set_head_angle
+            "/behavior/head_angle", Float32, self.set_head_angle
         )
         self.turn_sub = Subscriber(
-            "/behavior/turn_in_place", Float64, self.turn_in_place
+            "/behavior/turn_in_place", Float32, self.turn_in_place
         )
 
         self.lift_height_sub = Subscriber(
-            "/behavior/lift_height", Float64, self.set_lift_height
+            "/behavior/lift_height", Float32, self.set_lift_height
         )
         self.turn_face_sub = Subscriber(
             "/behavior/turn_face", Int16, self.turn_towards_face

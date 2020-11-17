@@ -14,7 +14,6 @@ Sample program to use Vector's voice synthesizer
 def main():
     print("Setting up publishers")
     speech_pub = Publisher("/behavior/say_text", String, queue_size=1)
-    vol_pub = Publisher()
 
     # Need small delay to setup publishers
     sleep(0.5)

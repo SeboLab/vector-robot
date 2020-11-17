@@ -50,21 +50,21 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/behavior/roll_visible_cube`: Receives a `Bool` message with a `true` value to roll a LightCube in view
 * `/behavior/say_text`: Receives a `String` message with text to synthesize into speech
 * `/behavior/eye_color`: Receives a custom `Color` message and changes Vector's eye color accordingly
-* `/behavior/head_angle`: Receives a `Float64` message and turns Vector's head to the specified angle, in radians. Range in degrees is [-22, 45], with other values clamped
-* `/behavior/turn_in_place`: Receives a `Float64` message and turns Vector in place by the specified amount, in radians. Positive values turn counterclockwise, while negative values turn clockwise.
-* `/behavior/lift_height`: Receives a `Float64` message and sets Vector's lift to the desired height. This is clamped between 0.0 (representing the bottom position) and 1.0 (representing the top position)
+* `/behavior/head_angle`: Receives a `Float32` message and turns Vector's head to the specified angle, in radians. Range in degrees is [-22, 45], with other values clamped
+* `/behavior/turn_in_place`: Receives a `Float32` message and turns Vector in place by the specified amount, in radians. Positive values turn counterclockwise, while negative values turn clockwise.
+* `/behavior/lift_height`: Receives a `Float32` message and sets Vector's lift to the desired height. This is clamped between 0.0 (representing the bottom position) and 1.0 (representing the top position)
 * `/behavior/turn_face`: **[needs debugging]**
 * `/anim/play`: Plays an animation, via a `String` message containing an animation name
 * `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
-* `/audio/play`: Receives a `String` message containing the path of a `.wav` file and plays it
+* `/audio/play`: Receives a `String` message containing the path of a `.wav` file and plays it. Audio format must be 8000-16025 hz, 16 bits, 1 channel.
 * `/audio/vol`: Recieves an integer 0-100 and sets the audiovolume accordingly. Note that this must be sent before a message is passed onto `/audio/vol` to play a file with the set volume; it does not modify sounds that are currently playing.
-* `/motors/head`
-* `/motors/lift`
-* `/motors/wheels`
-* `/motors/stop`
-* `/screen/color`
-* `/screen/image`
-* `/screen/display_duration`
+* `/motors/head`: Receives a `Float32` message to set Vector's head motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
+* `/motors/lift`: Receives a `Float32` message to set Vector's lift motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
+* `/motors/wheels`: Receives a `Drive` message and sets the velocity of the left and right treads in mm/sec.
+* `/motors/stop`: Receives a boolean value of `True` to stop all motors
+* `/screen/color`: Receives a `Color` message and sets Vector's screen to the chosen color for the specified duration. Default is 5 seconds.
+* `/screen/image`: Receives an `Image` message and displays it on Vector's screen. **[needs debugging]**
+* `/screen/display_duration`: Receives a `Float32` to set the display duration for colors and images on the screen. This must be set before publishing to `/screen` subtopics to take effect.
 
 
 ## Custom Messages
@@ -72,6 +72,7 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `Dist`: specifies how Vector should drive straight
   * `distance`: `Float32` value, in mm
   * `speed`: `Float32` value, in mm/sec. Note that the maximum internal speed is 220 mm/sec.
+* `Drive`
 * `Pose`: represents Vector's position in the world
   * `x`: X position in mm (`Float32`)
   * `y`: Y position in mm (`Float32`)
@@ -82,6 +83,30 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
   * `red`: int value 0-255
   * `green`: int value 0-255 
   * `blue`: int value 0-255
-* `Proximity`
-* `RobotStatus`
-* `Touch`
+* `Proximity`: a reading from Vector's proximity sensor
+  * `distance`: `Float32` value, in mm
+  * `found_object`: boolean value indicating if object is found by the sensor
+  * `is_lift_in_fov`: boolean value indicating if Vector's lift is blocking its sensor
+  * `signal_quality`: `Float32` representing likelihood of reported distance being a solid surface
+  * `unobstructed`: boolean value confirming if no objects are detected
+* `RobotStatus`: various boolean values representing Vector's state. Use this message to determine when all of Vector's nodes are online
+  * `are_motors_moving`
+  * `are_wheels_moving`
+  * `is_animating`
+  * `is_being_held`
+  * `is_button_pressed`
+  * `is_carrying_block`
+  * `is_charging`
+  * `is_cliff_detected`
+  * `is_docking_to_marker`
+  * `is_falling`
+  * `is_head_in_pos`
+  * `is_in_calm_power_mode`
+  * `is_lift_in_pos`
+  * `is_on_charger`
+  * `is_pathing`
+  * `is_picked_up`
+  * `is_robot_moving`
+* `Touch`: reading from Vector's touch sensor
+  * `is_being_touched`: Vector's conclusion of if it is being touched (boolean)
+  * `raw_touch_value`: integer representing the detected sensitivity from the touch sensor

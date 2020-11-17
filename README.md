@@ -57,7 +57,7 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/anim/play`: Plays an animation, via a `String` message containing an animation name
 * `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
 * `/audio/play`: Receives a `String` message containing the path of a `.wav` file and plays it
-* `/audio/vol`
+* `/audio/vol`: Recieves an integer 0-100 and sets the audiovolume accordingly. Note that this must be sent before a message is passed onto `/audio/vol` to play a file with the set volume; it does not modify sounds that are currently playing.
 * `/motors/head`
 * `/motors/lift`
 * `/motors/wheels`

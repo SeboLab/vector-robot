@@ -7,7 +7,7 @@ from std_msgs.msg import String, Float32, Bool, Float64
 from anki_vector_ros.msg import RobotStatus, Color
 
 """
-Sample program to make Vector move
+Sample program to make Vector animate off the base
 """
 
 

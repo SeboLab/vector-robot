@@ -2,18 +2,16 @@
 from time import sleep
 
 import rospy
-from rospy import Publisher, Subscriber
+from rospy import Publisher
 from std_msgs.msg import String, Bool
-from anki_vector_ros.msg import RobotStatus, Touch
+from anki_vector_ros.msg import RobotStatus
+
 from idle_anim import IdlePetAnimation
+from sleep_routine import TuckSleepRoutine
 
 """
 Sample program with a series of interactions with Vector
 """
-
-
-def on_touch(touch_msg):
-    pass
 
 
 class DemoNode:
@@ -25,13 +23,14 @@ class DemoNode:
         self.anim_pub = Publisher("/anim/play", String, queue_size=1)
         self.anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
 
-        self.touch_sub = Subscriber("/touch", Touch, on_touch)
-
         sleep(0.08)
+
         self.init_drive()
         sleep(2.0)
         self.pet_routine()
-        sleep(1.0)
+        self.tuck_sleep_routine()
+        sleep(5.0)
+        self.anim_pub.publish("anim_neutral_eyes_01")
         self.speech_pub.publish("Let's go to the next phase")
 
     def init_drive(self):
@@ -44,10 +43,14 @@ class DemoNode:
         self.anim_pub.publish("anim_eyepose_happy")
 
     def pet_routine(self):
-        self.speech_pub.publish("Do you want to pet me?")
-
         anim = IdlePetAnimation()
         while not anim.petted:
+            # Control rate of message being received here
+            sleep(0.5)
+
+    def tuck_sleep_routine(self):
+        state = TuckSleepRoutine()
+        while not state.tucked:
             sleep(0.5)
 
 
@@ -56,4 +59,3 @@ if __name__ == "__main__":
     rospy.wait_for_message("/status", RobotStatus)
 
     DemoNode()
-    rospy.spin()

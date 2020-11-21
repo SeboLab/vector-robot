@@ -29,16 +29,17 @@ class IdlePetAnimation:
     def start_anim(self):
         self.display_anim.clear()
         if not hasattr(self, "anim_thread"):
+            self.speech_pub.publish("Do you want to pet me?")
             self.anim_thread = Thread(target=self.animate)
             self.anim_thread.start()
 
     def animate(self):
-        if not self.display_anim.isSet():
+        while not self.display_anim.isSet():
             self.anim_pub.publish("anim_explorer_scan_left_01")
-        self.display_anim.wait(7.0)
-        if not self.display_anim.isSet():
-            self.anim_pub.publish("anim_explorer_scan_right_01")
-        self.display_anim.wait(7.0)
+            self.display_anim.wait(7.0)
+            if not self.display_anim.isSet():
+                self.anim_pub.publish("anim_explorer_scan_right_01")
+            self.display_anim.wait(7.0)
 
     def on_touch(self, touch_msg):
         # This represents any trigger for shutting down animation

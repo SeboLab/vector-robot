@@ -16,38 +16,44 @@ def on_touch(touch_msg):
     pass
 
 
-def main():
-    print("Setting up publishers")
-    speech_pub = Publisher("/behavior/say_text", String, queue_size=1)
-    base_pub = Publisher("/behavior/drive_charger", Bool, queue_size=1)
-    anim_pub = Publisher("/anim/play", String, queue_size=1)
-    anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
+class DemoNode:
+    def __init__(self):
 
-    touch_sub = Subscriber("/touch", Touch, on_touch)
+        print("Setting up publishers")
+        self.speech_pub = Publisher("/behavior/say_text", String, queue_size=1)
+        self.base_pub = Publisher("/behavior/drive_charger", Bool, queue_size=1)
+        self.anim_pub = Publisher("/anim/play", String, queue_size=1)
+        self.anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
 
-    # Need small delay to setup publishers
-    sleep(0.08)
-    anim_trig_pub.publish("DriveStartHappy")
-    base_pub.publish(False)
-    sleep(8.0)
+        self.touch_sub = Subscriber("/touch", Touch, on_touch)
 
-    speech_pub.publish("Hi, my name is Vector!")
-    sleep(0.5)
-    anim_pub.publish("anim_eyepose_happy")
-    sleep(2.0)
-    speech_pub.publish("Do you want to pet me?")
+        sleep(0.08)
+        self.init_drive()
+        sleep(2.0)
+        self.pet_routine()
+        sleep(1.0)
+        self.speech_pub.publish("Let's go to the next phase")
 
-    anim = IdlePetAnimation()
-    while not anim.petted:
+    def init_drive(self):
+        self.anim_trig_pub.publish("DriveStartHappy")
+        self.base_pub.publish(False)
+        sleep(8.0)
+
+        self.speech_pub.publish("Hi, my name is Vector!")
         sleep(0.5)
+        self.anim_pub.publish("anim_eyepose_happy")
 
-    sleep(1.0)
-    speech_pub.publish("Let's go to the next phase")
+    def pet_routine(self):
+        self.speech_pub.publish("Do you want to pet me?")
+
+        anim = IdlePetAnimation()
+        while not anim.petted:
+            sleep(0.5)
 
 
 if __name__ == "__main__":
     rospy.init_node("vector_demo")
     rospy.wait_for_message("/status", RobotStatus)
 
-    main()
+    DemoNode()
     rospy.spin()

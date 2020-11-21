@@ -16,6 +16,16 @@ ROS wrapper and startup code for Vector
 
 Note: Ensure you aren't using a VPN before connecting to Vector
 
+### Camera troubleshooting
+
+Even after installing `cv_bridge` from source, you may receive the following error from running the camera thread:
+
+```
+ImportError: dynamic module does not define module export function (PyInit_cv_bridge_boost)
+```
+
+In order to fix this, you'll need to recompile `tf2_ros` for Python 3. [This thread](https://answers.ros.org/question/326226/importerror-dynamic-module-does-not-define-module-export-function-pyinit__tf2/) provides steps for doing so, and remember to change `python3.6m` and `libpython3.6m.so` in the last step to match your specific Python version.
+
 ## Topics
 
 The `vector_ros` node creates a series of ROS topics for interfacing with the Anki Vector sensors and outputs. Each topic is designated to either be read from or written to. Please note that this package is currently not feature-complete, particularly for features involving tracking markers and Light Cubes, but feature requests are always appreciated!
@@ -37,7 +47,7 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/proximity`: `Proximity` message containing information with the robot's proximity to obstacles
 * `/status`: `RobotStatus` message with information about the robot's sensors and position
 * `/touch`: `Touch` message with the state and raw touch value of the robot's touch sensor
-* `/camera`: ROS `Image` representation of the robot's front-facing camera. Use `cv_bridge` to decode this message into a OpenCV-compatible format **[untested]**
+* `/camera`: ROS `Image` representation of the robot's front-facing camera. Use `cv_bridge` to decode this message into a OpenCV-compatible format
 
 ### Write-only topics
 

@@ -2,15 +2,18 @@
 from time import sleep
 
 import rospy
-from rospy import Publisher
+from rospy import Publisher, Subscriber
 from std_msgs.msg import String, Bool
-from anki_vector_ros.msg import RobotStatus
+from anki_vector_ros.msg import RobotStatus, Touch
+from idle_anim import IdlePetAnimation
 
 """
 Sample program with a series of interactions with Vector
 """
 
-pet_detected = False
+
+def on_touch(touch_msg):
+    pass
 
 
 def main():
@@ -19,6 +22,8 @@ def main():
     base_pub = Publisher("/behavior/drive_charger", Bool, queue_size=1)
     anim_pub = Publisher("/anim/play", String, queue_size=1)
     anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
+
+    touch_sub = Subscriber("/touch", Touch, on_touch)
 
     # Need small delay to setup publishers
     sleep(0.08)
@@ -32,11 +37,12 @@ def main():
     sleep(2.0)
     speech_pub.publish("Do you want to pet me?")
 
-    while not pet_detected and not rospy.is_shutdown():
-        sleep(6.0)
-        anim_pub.publish("anim_explorer_scan_left_01")
-        sleep(6.0)
-        anim_pub.publish("anim_explorer_scan_right_01")
+    anim = IdlePetAnimation()
+    while not anim.petted:
+        sleep(0.5)
+
+    sleep(1.0)
+    speech_pub.publish("Let's go to the next phase")
 
 
 if __name__ == "__main__":
@@ -44,3 +50,4 @@ if __name__ == "__main__":
     rospy.wait_for_message("/status", RobotStatus)
 
     main()
+    rospy.spin()

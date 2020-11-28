@@ -24,17 +24,20 @@ class MathDemoNode:
         self.spin_pub = Publisher("/behavior/turn_in_place", Float32, queue_size=1)
         self.recognizer = sr.Recognizer()
 
-        sleep(0.08)
+        sleep(0.1)
 
         self.init_drive()
         sleep(3.0)
 
         correct = 0
-        for i in range(10):
+        num_qs = 4
+        for i in range(num_qs):
             if self.ask_question():
                 correct += 1
 
-        self.speech_pub(f"You got {correct} out of 10 questions correct. Nice work!")
+        self.speech_pub(
+            f"You got {correct} out of {num_qs} questions correct. Nice work!"
+        )
 
     def init_drive(self):
         self.anim_trig_pub.publish("DriveStartHappy")
@@ -46,8 +49,8 @@ class MathDemoNode:
         with sr.Microphone() as source:
             print("[AUDIO] Awaiting audio")
             self.recognizer.adjust_for_ambient_noise(source)
-            sleep(1.0)
-            audio = self.recognizer.listen(source, timeout=5)
+            sleep(0.5)
+            audio = self.recognizer.listen(source, timeout=2)
 
         try:
             text = self.recognizer.recognize_google(audio)
@@ -96,7 +99,7 @@ class MathDemoNode:
                 self.speech_pub.publish(question)
 
         if user_ans == ans:
-            self.anim_pub.publish("anim_eyecontact_smile_01_head_angle_20")
+            self.anim_pub.publish("anim_onboarding_reacttoface_happy_01_head_angle_20")
             self.speech_pub.publish(f"Yes! {operation} is {ans}. Good job.")
             sleep(8.0)
             return True

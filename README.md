@@ -16,6 +16,20 @@ ROS wrapper and startup code for Vector
 
 Note: Ensure you aren't using a VPN before connecting to Vector
 
+### Using the camera
+
+By default, Vector's camera feed is turned off to conserve its battery, and there will be nothing published to the `/camera` topic. To launch the core Vector ROS node with camera enabled, run:
+
+```
+python3 anki_vector_core.py --camera
+```
+
+The `--camera` flag can also be set in the default `.launch` file:
+
+```
+roslaunch launch/vector_core.launch camera:=true
+```
+
 ### Camera troubleshooting
 
 Even after installing `cv_bridge` from source, you may receive the following error from running the camera thread:

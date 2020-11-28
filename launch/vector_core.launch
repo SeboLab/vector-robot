@@ -1,3 +1,9 @@
 <launch>
-	<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py" output="screen" />
+	<arg name="camera" default="false" doc="enable/disable Vector's camera feed"/>
+	<group if="$(arg camera)">
+		<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py" args="--camera" output="screen" />
+	</group>
+	<group unless="$(arg camera)">
+		<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py"  output="screen" />
+	</group>
 </launch>

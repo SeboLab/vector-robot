@@ -30,8 +30,8 @@ class DemoNode:
         self.pet_routine()
         self.tuck_sleep_routine()
         sleep(5.0)
-        self.anim_pub.publish("anim_neutral_eyes_01")
         self.speech_pub.publish("Let's go to the next phase")
+        self.next_phase()
 
     def init_drive(self):
         self.anim_trig_pub.publish("DriveStartHappy")
@@ -52,6 +52,10 @@ class DemoNode:
         state = TuckSleepRoutine()
         while not state.tucked:
             sleep(0.5)
+
+    def next_phase(self):
+        # Insert more here
+        self.anim_pub.publish("anim_neutral_eyes_01")
 
 
 if __name__ == "__main__":

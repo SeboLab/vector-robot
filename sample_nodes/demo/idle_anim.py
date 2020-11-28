@@ -16,7 +16,7 @@ class IdlePetAnimation:
         self.anim_pub = Publisher("/anim/play", String, queue_size=1)
         self.anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
         self.speech_pub = Publisher("/behavior/say_text", String, queue_size=1)
-        Subscriber("/touch", Touch, self.on_touch)
+        self.touch_sub = Subscriber("/touch", Touch, self.on_touch)
 
         self.display_anim = Event()
 

@@ -13,7 +13,7 @@ Example node of CV2 image connection
 """
 
 # Brightness value (in HSV) threshold for sleeping
-SLEEP_THRESH = 6.0
+SLEEP_THRESH = 8.0
 
 
 class TuckSleepRoutine:
@@ -51,8 +51,9 @@ class TuckSleepRoutine:
     def receive_camera(self, img_msg):
         # Receives image message and detects brightness
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, desired_encoding="mono8")
+        brightness = np.mean(cv_image)
 
-        if np.mean(cv_image) <= SLEEP_THRESH:
+        if brightness <= SLEEP_THRESH:
             self.dark_img_count += 1
         else:
             self.dark_img_count = 0
@@ -60,7 +61,7 @@ class TuckSleepRoutine:
         if self.dark_img_count == 10:
             self.display_anim.set()
             self.speech_pub.publish("Thanks for tucking me in")
-            for i in range(3):
+            for i in range(2):
                 self.anim_pub.publish("anim_gotosleep_sleeploop_01")
                 sleep(1.0)
             self.tucked = True

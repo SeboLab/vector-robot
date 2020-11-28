@@ -48,6 +48,9 @@ class DemoNode:
             # Control rate of message being received here
             sleep(0.5)
 
+        # Prevent further petting callbacks
+        anim.touch_sub.unregister()
+
     def tuck_sleep_routine(self):
         state = TuckSleepRoutine()
         while not state.tucked:

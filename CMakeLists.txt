@@ -24,6 +24,9 @@ add_message_files (
    RobotStatus.msg
    Touch.msg
    Drive.msg
+   Face.msg
+   ImageRect.msg
+   Object.msg
 )
 
 generate_messages (

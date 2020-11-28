@@ -61,7 +61,14 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/proximity`: `Proximity` message containing information with the robot's proximity to obstacles
 * `/status`: `RobotStatus` message with information about the robot's sensors and position
 * `/touch`: `Touch` message with the state and raw touch value of the robot's touch sensor
+
+**Camera required**
+
+Enable publishing to these topics by specifying the `--camera` flag when launching the core ROS node
+
 * `/camera`: ROS `Image` representation of the robot's front-facing camera. Use `cv_bridge` to decode this message into a OpenCV-compatible format
+* `/events/face`: `Face` message providing the pose, ID, and other attributes of the faces that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/find_faces`
+* `/events/object`: `Object` message providing the pose, object type, ID, and other attributes of the objects that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/look_in_place`
 
 ### Write-only topics
 
@@ -93,44 +100,105 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 
 ## Custom Messages
 
-* `Dist`: specifies how Vector should drive straight
-  * `distance`: `Float32` value, in mm
-  * `speed`: `Float32` value, in mm/sec. Note that the maximum internal speed is 220 mm/sec.
-* `Drive`
-* `Pose`: represents Vector's position in the world
-  * `x`: X position in mm (`Float32`)
-  * `y`: Y position in mm (`Float32`)
-  * `z`: Z position in mm (`Float32`)
-  * `q0`, `q1`, `q2`, `q3`: quarternion values representing Vector's rotation
-  * `angle_z`: rotation in the z axis in radians (`Float32`)
-* `Color`: represents an RGB color combination
-  * `red`: int value 0-255
-  * `green`: int value 0-255 
-  * `blue`: int value 0-255
-* `Proximity`: a reading from Vector's proximity sensor
-  * `distance`: `Float32` value, in mm
-  * `found_object`: boolean value indicating if object is found by the sensor
-  * `is_lift_in_fov`: boolean value indicating if Vector's lift is blocking its sensor
-  * `signal_quality`: `Float32` representing likelihood of reported distance being a solid surface
-  * `unobstructed`: boolean value confirming if no objects are detected
-* `RobotStatus`: various boolean values representing Vector's state. Use this message to determine when all of Vector's nodes are online
-  * `are_motors_moving`
-  * `are_wheels_moving`
-  * `is_animating`
-  * `is_being_held`
-  * `is_button_pressed`
-  * `is_carrying_block`
-  * `is_charging`
-  * `is_cliff_detected`
-  * `is_docking_to_marker`
-  * `is_falling`
-  * `is_head_in_pos`
-  * `is_in_calm_power_mode`
-  * `is_lift_in_pos`
-  * `is_on_charger`
-  * `is_pathing`
-  * `is_picked_up`
-  * `is_robot_moving`
-* `Touch`: reading from Vector's touch sensor
-  * `is_being_touched`: Vector's conclusion of if it is being touched (boolean)
-  * `raw_touch_value`: integer representing the detected sensitivity from the touch sensor
+#### `Dist`
+
+Specifies how Vector should drive straight
+
+* `distance`: distance to drive in mm (`Float32`)
+* `speed`: velocity in mm/sec (`Float32`). Note that the maximum internal speed is 220 mm/sec.
+
+#### `Drive`
+
+Enables manual, fine-grained control over Vector's motors
+
+* `left`: left motor velocity in mm/sec (`Float32`)
+* `right`: right motor velocity in mm/sec (`Float32`)
+* `left_acc`: left motor acceleration in mm/sec^2 (`Float32`)
+* `right_acc`: right motor acceleration in mm/sec^2 (`Float32`)
+
+
+#### `Pose`
+
+Represents Vector's position in the world
+
+* `x`: X position in mm (`Float32`)
+* `y`: Y position in mm (`Float32`)
+* `z`: Z position in mm (`Float32`)
+* `q0`, `q1`, `q2`, `q3`: quarternion values representing Vector's rotation
+* `angle_z`: rotation in the z axis in radians (`Float32`)
+
+#### `Color`
+
+Represents an RGB color combination
+
+* `red`: int value 0-255
+* `green`: int value 0-255 
+* `blue`: int value 0-255
+
+#### `Proximity`
+
+A reading from Vector's proximity sensor
+* `distance`: `Float32` value, in mm
+* `found_object`: boolean value indicating if object is found by the sensor
+* `is_lift_in_fov`: boolean value indicating if Vector's lift is blocking its sensor
+* `signal_quality`: `Float32` representing likelihood of reported distance being a solid surface
+* `unobstructed`: boolean value confirming if no objects are detected
+
+#### `RobotStatus`
+
+Various boolean values representing Vector's state. You may use this message to determine when all of Vector's nodes are online.
+* `are_motors_moving`
+* `are_wheels_moving`
+* `is_animating`
+* `is_being_held`
+* `is_button_pressed`
+* `is_carrying_block`
+* `is_charging`
+* `is_cliff_detected`
+* `is_docking_to_marker`
+* `is_falling`
+* `is_head_in_pos`
+* `is_in_calm_power_mode`
+* `is_lift_in_pos`
+* `is_on_charger`
+* `is_pathing`
+* `is_picked_up`
+* `is_robot_moving`
+
+#### `Touch`
+
+Reading from Vector's touch sensor
+
+* `is_being_touched`: Vector's conclusion of if it is being touched (boolean)
+* `raw_touch_value`: `Float32` representing the detected sensitivity from the touch sensor
+
+#### Object
+
+* `timestamp`: time in "robot time" (relative to SDK startup) for when Vector saw the object (`Int32`)
+* `object_id`: integer object ID
+* `object_type`: integer representing the object type
+  * 0: invalid object
+  * 1: unknown object
+  * 2: Light Cube. Note that Vector can recognize at most one Light Cube at a time
+  * 3: charger
+  * 15: custom object
+* `is_active`: retrieves the state of the object with respect to Vector's connection
+* `img_rect`: `ImageRect` message enclosing the object in a bounding box with respect to Vector's camera
+* `pose`: `Pose` message for object's location with respect to vector
+* `top_face_orientation_rad`: offset of the object's top side, in radians (`Float32`)
+
+#### `Face`
+
+* `timestamp`: time in "robot time" (relative to SDK startup) for when Vector saw the object (`Int32`)
+* `face_id`: integer face ID. May change once Vector loses track of the face.
+* `img_rect`: `ImageRect` message enclosing the face in a bounding box with respect to Vector's camera
+* `pose`: `Pose` message for object's location with respect to vector
+
+#### `ImageRect`
+
+Provides a bounding box for a tracked object with respect to Vector's camera
+
+* `x_top_left`: x-coordinate of top-left corner of the box (`Float32`)
+* `y_top_left`: y-coordinate of top-left corner of the box (`Float32`)
+* `width`: width of the box in pixels (`Float32`)
+* `height`: height of the box in pixels (`Float32`)

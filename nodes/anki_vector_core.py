@@ -18,13 +18,14 @@ from sensors import Sensors
 from motors import Motors
 from media import Media
 from vision import Vision
+from events import EventHandler
 
 
 class VectorNode:
     def __init__(self, publish_rate=10, camera=False):
         self.rate = rospy.Rate(publish_rate)
 
-        self.robot = anki_vector.Robot()
+        self.robot = anki_vector.Robot(enable_face_detection=camera)
 
         try:
             self.robot.connect(timeout=20)
@@ -40,6 +41,7 @@ class VectorNode:
         self.motors_control = Motors(self.robot)
         self.media_control = Media(self.robot)
         self.vision_control = Vision(self.robot)
+        self.event_handler = EventHandler(self.robot)
 
         self.async_robot = anki_vector.AsyncRobot()
         self.async_robot.connect()

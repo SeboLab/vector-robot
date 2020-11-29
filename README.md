@@ -89,7 +89,7 @@ Note that the following routines only execute if Vector sees the specified objec
 * `/behavior/turn_face`: Turns to the Face with the specified ID. Note that publishing to this topic will have no effect if the face isn't currently in view.
 * `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `true` value makes the robot drive on its charger, while a `false` value makes it drive off its charger.
 
-##### High-level driving
+#### High-level driving
 
 * `/behavior/drive_straight`: Receives a custom `Dist` message, making the robot drive straight for the specified distance and speed
 * `/behavior/head_angle`: Receives a `Float32` message and turns Vector's head to the specified angle, in radians. Range in degrees is [-22, 45], with other values clamped

@@ -1,6 +1,6 @@
 # vector-robot
 
-ROS wrapper and startup code for Vector
+ROS wrapper and startup code for the Anki Vector robot
 
 ## Usage
 
@@ -8,13 +8,13 @@ ROS wrapper and startup code for Vector
 2. [Setup the Vector Linux SDK](https://developer.anki.com/vector/docs/install-linux.html)
 3. Complete the Vector robot authentication process with `python3 -m anki_vector.configure`
 4. Clone this repository into your Catkin workspace
-5. If needed, install additional dependencies. Run `pip3 install -r requirements.txt`.
-6. You'll also need to install `cv_bridge` from source for Python 3 with `catkin build`. [This Stack Overflow thread](https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3) is useful for doing so.
-6. Install this package with `catkin_make install` (from the root of your workspace) or `catkin build anki_vector_ros`
+5. Install additional dependencies (if needed) with `pip3 install -r requirements.txt`.
+6. Install `cv_bridge` from source for Python 3 with `catkin build` to enable camera functionality. [This Stack Overflow thread](https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3) provides instructions for doing so.
+6. Install this package with `catkin_make install` (from the root of your workspace) or `catkin build anki_vector_ros`.
 7. Run `source ~/catkin_ws/devel/setup.bash`
-8. Launch a barebones instance of the Vector node with `roslaunch launch/vector_core.launch`. You may also wish to create your own `.launch` files incorporating your custom nodes. See [`hello_world.launch`](./launch/hello_world.launch) for an example.
+8. Launch a barebones instance of the Vector node with `roslaunch launch/vector_core.launch` or `python3 nodes/anki_vector_core.py`. You may also wish to create your own `.launch` files incorporating custom nodes. See [`hello_world.launch`](./launch/hello_world.launch) for an example.
 
-Note: Ensure you aren't using a VPN before connecting to Vector
+**Note:** Ensure you aren't using a VPN before connecting to Vector
 
 ### Using the camera
 
@@ -30,7 +30,7 @@ The `--camera` flag can also be set in the default `.launch` file:
 roslaunch launch/vector_core.launch camera:=true
 ```
 
-### Camera troubleshooting
+#### Camera troubleshooting
 
 Even after installing `cv_bridge` from source, you may receive the following error from running the camera thread:
 
@@ -62,7 +62,7 @@ Some of these topics send/receive custom messages instead of built-in ROS messag
 * `/status`: `RobotStatus` message with information about the robot's sensors and position
 * `/touch`: `Touch` message with the state and raw touch value of the robot's touch sensor
 
-**Camera required**
+#### Camera required
 
 Enable publishing to these topics by specifying the `--camera` flag when launching the core ROS node
 
@@ -72,35 +72,49 @@ Enable publishing to these topics by specifying the `--camera` flag when launchi
 
 ### Write-only topics
 
-* `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `true` value makes the robot drive on its charger, while a `false` value makes it drive off its charger.
-* `/behavior/drive_straight`: Receives a custom `Dist` message, making the robot drive straight for the specified distance and speed
+#### Pre-programmed `/behavior` routines
+
 * `/behavior/find_faces`: Receives a `Bool` message with a `true` value to turn in place and look for faces
 * `/behavior/look_in_place`: Receives a `Bool` message with a value of `true` to turn in place
-* `/behavior/go_to_pose`: Receives a `Pose` message and goes to the specified position. Note that the `angle_z`, `angle`, and `pitch` properties are ignored; quarternion values should be used instead.
-* `/behavior/go_to_object`: Receives an `Int16` message with the ID of an object, which Vector drives towards (if visible)
-* `/behavior/wheelie`: Receives an `Int16` message with the ID of Light Cube, which Vector pops a wheelie with (if visible)
-* `/behavior/roll_cube`: Receives an `Int16` message with the ID of Light Cube, which Vector rolls towards itself (if visible)
-* `/behavior/dock_cube`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and hooks onto (if visible)
-* `/behavior/pickup_object`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and picks up (if visible)
+
+Note that the following routines only execute if Vector sees the specified object, face, or its charger:
+
+* `/behavior/go_to_object`: Receives an `Int16` message with the ID of an object, which Vector drives towards
+* `/behavior/wheelie`: Receives an `Int16` message with the ID of Light Cube, which Vector pops a wheelie with
+* `/behavior/roll_cube`: Receives an `Int16` message with the ID of Light Cube, which Vector rolls towards itself
+* `/behavior/roll_visible_cube`: Receives a `Bool` message with a `true` value to roll a LightCube if visible
+* `/behavior/dock_cube`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and hooks onto
+* `/behavior/pickup_object`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and picks up
 * `/behavior/place_object_ground`: Places the `LightCube` with the specified `Int16` ID onto the ground
-* `/behavior/roll_visible_cube`: Receives a `Bool` message with a `true` value to roll a LightCube in view
-* `/behavior/say_text`: Receives a `String` message with text to synthesize into speech
-* `/behavior/eye_color`: Receives a custom `Color` message and changes Vector's eye color accordingly
+* `/behavior/turn_face`: Turns to the Face with the specified ID. Note that publishing to this topic will have no effect if the face isn't currently in view.
+* `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `true` value makes the robot drive on its charger, while a `false` value makes it drive off its charger.
+
+##### High-level driving
+
+* `/behavior/drive_straight`: Receives a custom `Dist` message, making the robot drive straight for the specified distance and speed
 * `/behavior/head_angle`: Receives a `Float32` message and turns Vector's head to the specified angle, in radians. Range in degrees is [-22, 45], with other values clamped
 * `/behavior/turn_in_place`: Receives a `Float32` message and turns Vector in place by the specified amount, in radians. Positive values turn counterclockwise, while negative values turn clockwise.
 * `/behavior/lift_height`: Receives a `Float32` message and sets Vector's lift to the desired height. This is clamped between 0.0 (representing the bottom position) and 1.0 (representing the top position)
-* `/behavior/turn_face`: Turns to the Face with the specified ID. Note that publishing to this topic will have no effect if the face isn't currently in view.
+* `/behavior/go_to_pose`: Receives a `Pose` message and goes to the specified position. Note that the `angle_z`, `angle`, and `pitch` properties are ignored; quarternion values should be used instead.
+
+#### Media and animations
+
+* `/behavior/say_text`: Receives a `String` message with text to synthesize into speech
+* `/behavior/eye_color`: Receives a custom `Color` message and changes Vector's eye color accordingly
 * `/anim/play`: Plays an animation, via a `String` message containing an animation name
 * `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
 * `/audio/play`: Receives a `String` message containing the absolute path of a `.wav` file and plays it. Audio format must be 8000-16025 hz, 16 bits, 1 channel.
 * `/audio/vol`: Recieves an integer 0-100 and sets the audiovolume accordingly. Note that this must be sent before a message is passed onto `/audio/vol` to play a file with the set volume; it does not modify sounds that are currently playing.
+* `/screen/color`: Receives a `Color` message and sets Vector's screen to the chosen color for the specified duration. Default is 5 seconds.
+* `/screen/image`: Receives an `String` message containing the absolute path on an image and displays it on Vector's screen. Resizes image as necessary
+* `/screen/display_duration`: Receives a `Float32` to set the display duration for colors and images on the screen. This must be set before publishing to `/screen` subtopics to take effect.
+
+#### Low-level motor control
+
 * `/motors/head`: Receives a `Float32` message to set Vector's head motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
 * `/motors/lift`: Receives a `Float32` message to set Vector's lift motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
 * `/motors/wheels`: Receives a `Drive` message and sets the velocity of the left and right treads in mm/sec.
 * `/motors/stop`: Receives a boolean value of `True` to stop all motors
-* `/screen/color`: Receives a `Color` message and sets Vector's screen to the chosen color for the specified duration. Default is 5 seconds.
-* `/screen/image`: Receives an `String` message containing the absolute path on an image and displays it on Vector's screen. Resizes image as necessary
-* `/screen/display_duration`: Receives a `Float32` to set the display duration for colors and images on the screen. This must be set before publishing to `/screen` subtopics to take effect.
 
 
 ## Custom Messages
@@ -149,27 +163,6 @@ A reading from Vector's proximity sensor
 * `signal_quality`: `Float32` representing likelihood of reported distance being a solid surface
 * `unobstructed`: boolean value confirming if no objects are detected
 
-#### `RobotStatus`
-
-Various boolean values representing Vector's state. You may use this message to determine when all of Vector's nodes are online.
-* `are_motors_moving`
-* `are_wheels_moving`
-* `is_animating`
-* `is_being_held`
-* `is_button_pressed`
-* `is_carrying_block`
-* `is_charging`
-* `is_cliff_detected`
-* `is_docking_to_marker`
-* `is_falling`
-* `is_head_in_pos`
-* `is_in_calm_power_mode`
-* `is_lift_in_pos`
-* `is_on_charger`
-* `is_pathing`
-* `is_picked_up`
-* `is_robot_moving`
-
 #### `Touch`
 
 Reading from Vector's touch sensor
@@ -177,7 +170,7 @@ Reading from Vector's touch sensor
 * `is_being_touched`: Vector's conclusion of if it is being touched (boolean)
 * `raw_touch_value`: `Float32` representing the detected sensitivity from the touch sensor
 
-#### Object
+#### `Object`
 
 * `timestamp`: time in "robot time" (relative to SDK startup) for when Vector saw the object (`Int32`)
 * `object_id`: integer object ID
@@ -207,3 +200,24 @@ Provides a bounding box for a tracked object with respect to Vector's camera
 * `y_top_left`: y-coordinate of top-left corner of the box (`Float32`)
 * `width`: width of the box in pixels (`Float32`)
 * `height`: height of the box in pixels (`Float32`)
+
+#### `RobotStatus`
+
+Various boolean values representing Vector's state. You may use this message to determine when all of Vector's nodes are online.
+* `are_motors_moving`
+* `are_wheels_moving`
+* `is_animating`
+* `is_being_held`
+* `is_button_pressed`
+* `is_carrying_block`
+* `is_charging`
+* `is_cliff_detected`
+* `is_docking_to_marker`
+* `is_falling`
+* `is_head_in_pos`
+* `is_in_calm_power_mode`
+* `is_lift_in_pos`
+* `is_on_charger`
+* `is_pathing`
+* `is_picked_up`
+* `is_robot_moving`

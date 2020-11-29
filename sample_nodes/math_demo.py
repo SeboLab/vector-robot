@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import random
+import sys
 from time import sleep
 
 import rospy
@@ -6,7 +8,6 @@ from rospy import Publisher
 from std_msgs.msg import String, Float32
 from anki_vector_ros.msg import RobotStatus
 
-import random
 import speech_recognition as sr
 
 """
@@ -23,6 +24,13 @@ class MathDemoNode:
         self.anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
         self.spin_pub = Publisher("/behavior/turn_in_place", Float32, queue_size=1)
         self.recognizer = sr.Recognizer()
+        self.recognizer.pause_threshold = 0.5
+        self.recognizer.dynamic_energy_threshold = False
+        with sr.Microphone() as source:
+            self.recognizer.adjust_for_ambient_noise(source, duration=3)
+
+        # Overcompensate for background noise
+        self.recognizer.energy_threshold += 200
 
         sleep(0.1)
 
@@ -31,11 +39,12 @@ class MathDemoNode:
 
         correct = 0
         num_qs = 4
-        for i in range(num_qs):
+        for _ in range(num_qs):
             if self.ask_question():
                 correct += 1
 
-        self.speech_pub(
+        self.anim_trig_pub.publish("FetchCubeSuccess")
+        self.speech_pub.publish(
             f"You got {correct} out of {num_qs} questions correct. Nice work!"
         )
 
@@ -48,14 +57,14 @@ class MathDemoNode:
     def recognize_audio(self):
         with sr.Microphone() as source:
             print("[AUDIO] Awaiting audio")
-            self.recognizer.adjust_for_ambient_noise(source)
-            sleep(0.5)
-            audio = self.recognizer.listen(source, timeout=2)
+            audio = self.recognizer.listen(source, timeout=10.0)
 
         try:
             text = self.recognizer.recognize_google(audio)
             print('[AUDIO] User said "', text + '"')
             return text
+        except sr.WaitTimeoutError:
+            return "repeat"
         except sr.UnknownValueError:
             print("[ERROR] Couldn't understand audio")
             self.speech_pub.publish("Could you say that again?")
@@ -92,10 +101,11 @@ class MathDemoNode:
                     user_ans = int(text)
                     break
             except ValueError:
-                self.speech_pub.publish(
-                    "I don't think that's a number. Let's try again!"
-                )
-                sleep(3.0)
+                if text.strip() != "repeat":
+                    self.speech_pub.publish(
+                        "I don't think that's a number. Let's try again!"
+                    )
+                    sleep(3.0)
                 self.speech_pub.publish(question)
 
         if user_ans == ans:
@@ -103,15 +113,18 @@ class MathDemoNode:
             self.speech_pub.publish(f"Yes! {operation} is {ans}. Good job.")
             sleep(8.0)
             return True
-        else:
-            self.anim_pub.publish("anim_rtp_blackjack_playerno_01")
-            self.speech_pub.publish(f"Sorry, {operation} is {ans}.")
-            sleep(4.0)
-            return False
+
+        self.anim_pub.publish("anim_rtp_blackjack_playerno_01")
+        self.speech_pub.publish(f"Sorry, {operation} is {ans}.")
+        sleep(4.0)
+        return False
 
 
 if __name__ == "__main__":
     rospy.init_node("vector_math_demo")
     rospy.wait_for_message("/status", RobotStatus)
 
-    MathDemoNode()
+    try:
+        MathDemoNode()
+    except KeyboardInterrupt:
+        sys.exit(0)

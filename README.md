@@ -77,14 +77,19 @@ Enable publishing to these topics by specifying the `--camera` flag when launchi
 * `/behavior/find_faces`: Receives a `Bool` message with a `true` value to turn in place and look for faces
 * `/behavior/look_in_place`: Receives a `Bool` message with a value of `true` to turn in place
 * `/behavior/go_to_pose`: Receives a `Pose` message and goes to the specified position. Note that the `angle_z`, `angle`, and `pitch` properties are ignored; quarternion values should be used instead.
-* `/behavior/place_object_ground`: **[untested]**
+* `/behavior/go_to_object`: Receives an `Int16` message with the ID of an object, which Vector drives towards (if visible)
+* `/behavior/wheelie`: Receives an `Int16` message with the ID of Light Cube, which Vector pops a wheelie with (if visible)
+* `/behavior/roll_cube`: Receives an `Int16` message with the ID of Light Cube, which Vector rolls towards itself (if visible)
+* `/behavior/dock_cube`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and hooks onto (if visible)
+* `/behavior/pickup_object`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and picks up (if visible)
+* `/behavior/place_object_ground`: Places the `LightCube` with the specified `Int16` ID onto the ground
 * `/behavior/roll_visible_cube`: Receives a `Bool` message with a `true` value to roll a LightCube in view
 * `/behavior/say_text`: Receives a `String` message with text to synthesize into speech
 * `/behavior/eye_color`: Receives a custom `Color` message and changes Vector's eye color accordingly
 * `/behavior/head_angle`: Receives a `Float32` message and turns Vector's head to the specified angle, in radians. Range in degrees is [-22, 45], with other values clamped
 * `/behavior/turn_in_place`: Receives a `Float32` message and turns Vector in place by the specified amount, in radians. Positive values turn counterclockwise, while negative values turn clockwise.
 * `/behavior/lift_height`: Receives a `Float32` message and sets Vector's lift to the desired height. This is clamped between 0.0 (representing the bottom position) and 1.0 (representing the top position)
-* `/behavior/turn_face`: **[needs debugging]**
+* `/behavior/turn_face`: Turns to the Face with the specified ID. Note that publishing to this topic will have no effect if the face isn't currently in view.
 * `/anim/play`: Plays an animation, via a `String` message containing an animation name
 * `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
 * `/audio/play`: Receives a `String` message containing the absolute path of a `.wav` file and plays it. Audio format must be 8000-16025 hz, 16 bits, 1 channel.

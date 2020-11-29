@@ -26,9 +26,6 @@ class Behavior:
             "/behavior/look_in_place", Bool, self.look_in_place
         )
 
-        # Skipped go_to_object(), pop_a_wheelie(), roll_cube() and pickup_object()
-        # need to find a way to represent LightCube
-
         self.pose_sub = Subscriber("/behavior/go_to_pose", Pose, self.go_to_pose)
         self.place_object_sub = Subscriber(
             "/behavior/place_object_ground", Int16, self.place_object_ground
@@ -54,6 +51,18 @@ class Behavior:
         )
         self.turn_face_sub = Subscriber(
             "/behavior/turn_face", Int16, self.turn_towards_face
+        )
+
+        self.go_to_object_sub = Subscriber(
+            "/behavior/go_to_object", Int16, self.go_to_object
+        )
+        self.wheelie_sub = Subscriber("/behavior/wheelie", Int16, self.wheelie)
+        self.roll_cube_sub = Subscriber("/behavior/roll_cube", Int16, self.roll_cube)
+        self.dock_cube_sub = Subscriber(
+            "/behavior/dock_cube", Int16, self.dock_with_cube
+        )
+        self.pickup_sub = Subscriber(
+            "/behavior/pickup_object", Int16, self.pickup_object
         )
 
     def drive_charger(self, bool_val):
@@ -116,4 +125,26 @@ class Behavior:
         self.robot.behavior.turn_in_place(angle_obj)
 
     def turn_towards_face(self, face_id):
-        self.robot.behavior.turn_towards_face(face_id.data)
+        face = self.robot.world.get_face(face_id.data)
+        self.robot.behavior.turn_towards_face(face)
+
+    def roll_cube(self, object_id):
+        obj = self.robot.world.get_object(object_id.data)
+        self.robot.behavior.roll_cube(obj)
+
+    def dock_with_cube(self, object_id):
+        obj = self.robot.world.get_object(object_id.data)
+        self.robot.behavior.dock_with_cube(obj)
+
+    def pickup_object(self, object_id):
+        obj = self.robot.world.get_object(object_id.data)
+        self.robot.behavior.pickup_object(obj)
+
+    def wheelie(self, object_id):
+        obj = self.robot.world.get_object(object_id.data)
+        self.robot.behavior.pop_a_wheelie(obj)
+
+    def go_to_object(self, object_id):
+        obj = self.robot.world.get_object(object_id.data)
+        distance = 0  # Can modify this as needed
+        self.robot.behavior.go_to_object(obj, distance)

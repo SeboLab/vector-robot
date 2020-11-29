@@ -8,6 +8,7 @@ from anki_vector_ros.msg import RobotStatus
 
 from idle_anim import IdlePetAnimation
 from sleep_routine import TuckSleepRoutine
+from fist_bump import FistBump
 
 """
 Sample program with a series of interactions with Vector
@@ -24,9 +25,9 @@ class DemoNode:
         self.anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
 
         sleep(0.08)
-
         self.init_drive()
         sleep(2.0)
+        self.fist_bump_routine()
         self.pet_routine()
         self.tuck_sleep_routine()
         sleep(5.0)
@@ -53,6 +54,10 @@ class DemoNode:
         while not state.tucked:
             sleep(0.5)
 
+    def fist_bump_routine(self):
+        state = FistBump()
+        while not state.bumped:
+            sleep(.5)
 
 if __name__ == "__main__":
     rospy.init_node("vector_demo")

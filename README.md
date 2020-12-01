@@ -6,8 +6,8 @@ ROS wrapper and startup code for the Anki Vector robot
 
 1. [Usage](#usage)
 2. [Topics](#topics)
-  1. [Read-only](#read-only-topics)
-  1. [Write-only](#write-only-topics)
+    1. [Read-only](#read-only-topics)
+    2. [Write-only](#write-only-topics)
 3. [Custom messages](#custom-messages)
 4. [Demos](#demos)
 

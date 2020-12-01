@@ -2,6 +2,15 @@
 
 ROS wrapper and startup code for the Anki Vector robot
 
+**Contents**
+
+1. [Usage](#usage)
+2. [Topics](#topics)
+  1. [Read-only](#read-only-topics)
+  1. [Write-only](#write-only-topics)
+3. [Custom messages](#custom-messages)
+4. [Demos](#demos)
+
 ## Usage
 
 1. Install ROS and `rospy`
@@ -12,7 +21,19 @@ ROS wrapper and startup code for the Anki Vector robot
 6. Install `cv_bridge` from source for Python 3 with `catkin build` to enable camera functionality. [This Stack Overflow thread](https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3) provides instructions for doing so.
 6. Install this package with `catkin_make install` (from the root of your workspace) or `catkin build anki_vector_ros`.
 7. Run `source ~/catkin_ws/devel/setup.bash`
-8. Launch a barebones instance of the Vector node with `roslaunch launch/vector_core.launch` or `python3 nodes/anki_vector_core.py`. You may also wish to create your own `.launch` files incorporating custom nodes. See [`hello_world.launch`](./launch/hello_world.launch) for an example.
+8. Launch an instance of the core `vector_ros` node:
+
+```
+roslaunch launch/vector_core.launch
+```
+
+The node may also be run directly via Python if `roscore` is running:
+
+```
+python3 nodes/anki_vector_core.py
+```
+
+You may also wish to create your own `.launch` files incorporating custom nodes. See [`hello_world.launch`](./launch/hello_world.launch) for an example.
 
 **Note:** Ensure you aren't using a VPN before connecting to Vector
 
@@ -21,7 +42,7 @@ ROS wrapper and startup code for the Anki Vector robot
 By default, Vector's camera feed is turned off to conserve its battery, and there will be nothing published to the `/camera` topic. To launch the core Vector ROS node with camera enabled, run:
 
 ```
-python3 anki_vector_core.py --camera
+python3 nodes/anki_vector_core.py --camera
 ```
 
 The `--camera` flag can also be set in the default `.launch` file:
@@ -42,11 +63,13 @@ In order to fix this, you'll need to recompile `tf2_ros` for Python 3. [This thr
 
 ## Topics
 
-The `vector_ros` node creates a series of ROS topics for interfacing with the Anki Vector sensors and outputs. Each topic is designated to either be read from or written to. Please note that this package is currently not feature-complete, particularly for features involving tracking markers and Light Cubes, but feature requests are always appreciated!
+The `vector_ros` node creates a series of ROS topics for interfacing with the Anki Vector sensors and outputs. Each topic is designated to either be read from or written to. Please note that this package is currently not feature-complete, particularly for features involving NavMaps and custom object tracking, but feature requests are always appreciated!
 
 Some of these topics send/receive custom messages instead of built-in ROS messages. For details, see [custom message definitions below](#custom-messages).
 
 ### Read-only topics
+
+Subscribe to these topics to access Vector's sensor readings
 
 * `/accel`: `Vector3` reading of the robot's XYZ acceleration
 * `/gyro`: `Vector3` reading of the robot's XYZ tilt
@@ -72,12 +95,14 @@ Enable publishing to these topics by specifying the `--camera` flag when launchi
 
 ### Write-only topics
 
+Publish to these topics to make Vector move and perform other functions. Note that for all movement-based topics, Vector will prevent itself from falling from surfaces (e.g. desks), even when programmed to continue moving.
+
 #### Pre-programmed `/behavior` routines
 
 * `/behavior/find_faces`: Receives a `Bool` message with a `true` value to turn in place and look for faces
 * `/behavior/look_in_place`: Receives a `Bool` message with a value of `true` to turn in place
 
-Note that the following routines only execute if Vector sees the specified object, face, or its charger:
+Note that the following routines only execute if Vector is currently detecting the specified object or face:
 
 * `/behavior/go_to_object`: Receives an `Int16` message with the ID of an object, which Vector drives towards
 * `/behavior/wheelie`: Receives an `Int16` message with the ID of Light Cube, which Vector pops a wheelie with
@@ -86,7 +111,7 @@ Note that the following routines only execute if Vector sees the specified objec
 * `/behavior/dock_cube`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and hooks onto
 * `/behavior/pickup_object`: Receives an `Int16` message with the ID of Light Cube, which Vector drives towards and picks up
 * `/behavior/place_object_ground`: Places the `LightCube` with the specified `Int16` ID onto the ground
-* `/behavior/turn_face`: Turns to the Face with the specified ID. Note that publishing to this topic will have no effect if the face isn't currently in view.
+* `/behavior/turn_face`: Turns to the `Face` with the specified ID. Note that publishing to this topic will have no effect if the face isn't currently in view.
 * `/behavior/drive_charger`: Receives a `Bool` message to trigger driving on or off Vector's charger. A `true` value makes the robot drive on its charger, while a `false` value makes it drive off its charger.
 
 #### High-level driving
@@ -97,24 +122,24 @@ Note that the following routines only execute if Vector sees the specified objec
 * `/behavior/lift_height`: Receives a `Float32` message and sets Vector's lift to the desired height. This is clamped between 0.0 (representing the bottom position) and 1.0 (representing the top position)
 * `/behavior/go_to_pose`: Receives a `Pose` message and goes to the specified position. Note that the `angle_z`, `angle`, and `pitch` properties are ignored; quarternion values should be used instead.
 
-#### Media and animations
-
-* `/behavior/say_text`: Receives a `String` message with text to synthesize into speech
-* `/behavior/eye_color`: Receives a custom `Color` message and changes Vector's eye color accordingly
-* `/anim/play`: Plays an animation, via a `String` message containing an animation name
-* `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name
-* `/audio/play`: Receives a `String` message containing the absolute path of a `.wav` file and plays it. Audio format must be 8000-16025 hz, 16 bits, 1 channel.
-* `/audio/vol`: Recieves an integer 0-100 and sets the audiovolume accordingly. Note that this must be sent before a message is passed onto `/audio/vol` to play a file with the set volume; it does not modify sounds that are currently playing.
-* `/screen/color`: Receives a `Color` message and sets Vector's screen to the chosen color for the specified duration. Default is 5 seconds.
-* `/screen/image`: Receives an `String` message containing the absolute path on an image and displays it on Vector's screen. Resizes image as necessary
-* `/screen/display_duration`: Receives a `Float32` to set the display duration for colors and images on the screen. This must be set before publishing to `/screen` subtopics to take effect.
-
 #### Low-level motor control
 
 * `/motors/head`: Receives a `Float32` message to set Vector's head motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
 * `/motors/lift`: Receives a `Float32` message to set Vector's lift motor speed. Positive values represent up, negative values represent down. Measured in rad/sec.
 * `/motors/wheels`: Receives a `Drive` message and sets the velocity of the left and right treads in mm/sec.
 * `/motors/stop`: Receives a boolean value of `True` to stop all motors
+
+#### Media and animations
+
+* `/anim/play`: Plays an animation, via a `String` message containing an animation name. See [here](./animations.md) for a full list of animation names.
+* `/anim/play_trigger`: Plays an animation trigger, via a `String` message containing an animation trigger name. See [here](./animations.md#animation-trigger-list) for a full list of animation trigger names.
+* `/behavior/say_text`: Receives a `String` message with text to synthesize into speech
+* `/behavior/eye_color`: Receives a custom `Color` message and changes Vector's eye color accordingly
+* `/audio/play`: Receives a `String` message containing the absolute path of a `.wav` file and plays it. Audio format must be 8000-16025 Hz, 16-bit, mono.
+* `/audio/vol`: Recieves an integer 0-100 and sets the audio volume accordingly. This must be sent before a message is passed onto `/audio/vol` to play a file with the set volume; it does not modify sounds that are currently playing.
+* `/screen/color`: Receives a `Color` message and sets Vector's screen to the chosen color for the specified duration.
+* `/screen/image`: Receives an `String` message containing the absolute path on an image and displays it on Vector's screen. Resizes image as necessary
+* `/screen/display_duration`: Receives a `Float32` to set the display duration for colors and images on the screen. This must be set before publishing to `/screen` subtopics to take effect. Default is 5 seconds.
 
 
 ## Custom Messages
@@ -221,3 +246,16 @@ Various boolean values representing Vector's state. You may use this message to 
 * `is_pathing`
 * `is_picked_up`
 * `is_robot_moving`
+
+
+## Demos
+
+The [`launch`](./launch/) and [`sample_nodes`](./sample_nodes/) contains several executable roslaunch and Python files with examples of using this package. For standalone Python files, ensure the `vector_ros` node is running beforehand.
+
+* `hello_world.launch`: launches a script where Vector drives in a straight line, then stops
+* `lab_demo.launch`: **[to be completed]** lab demo where Vector drives off its base, runs an idle animation, and prompts the user for various interactions. These include petting Vector, tucking it into sleep, giving it a fistbump, and giving it a cube.
+* `display_image.py`: displays an image for a specified duration on Vector's screen
+* `play_sound.py`: plays a sound file in the correct format (see above) at a specified volume
+* `text_to_speech.py`: script to continuously try out Vector's voice synthesizer, converting user input text to speech
+* `animate.py`: showcase animation sequence where Vector moves its forklift up and down, drives off its base, says hello, and changes its eye color
+* `math_demo.py`: Vector asks several simple math questions and responds to the user accordingly. Relies the computer's microphone and an internet connection for audio input/recognition. [Click here](https://drive.google.com/file/d/17Zbq8zSnWRLT9JR43gHkNIH8i1KcZ3vu/view?usp=sharing) for a video demo!

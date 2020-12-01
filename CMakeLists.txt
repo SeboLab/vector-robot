@@ -27,6 +27,7 @@ add_message_files (
    Face.msg
    ImageRect.msg
    Object.msg
+   LightCube.msg
 )
 
 generate_messages (

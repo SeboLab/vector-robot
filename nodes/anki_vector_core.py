@@ -7,6 +7,7 @@ into different nodes/classes based on functionality
 import sys
 import argparse
 from threading import Thread
+import concurrent.futures
 import rospy
 
 import anki_vector
@@ -19,6 +20,7 @@ from motors import Motors
 from media import Media
 from vision import Vision
 from events import EventHandler
+from cube import LightCube
 
 
 class VectorNode:
@@ -47,9 +49,10 @@ class VectorNode:
         self.async_robot.connect()
 
         # Needs to be async due to continuous publishing
-        Thread(target=self.create_sensor_thread).start()
+        Thread(target=Sensors, args=[self.robot, self.rate]).start()
+        Thread(target=LightCube, args=[self.robot, self.rate]).start()
         if camera:
-            Thread(target=self.create_camera_thread).start()
+            Thread(target=Camera, args=[self.robot]).start()
 
         # TODO handle NavMapComponents
         # World of the robot is best represented as Python objects; we can create
@@ -76,4 +79,7 @@ if __name__ == "__main__":
     vector = VectorNode(camera=args.camera)
     rospy.spin()
 
-    rospy.on_shutdown(vector.shutdown)
+    try:
+        rospy.on_shutdown(vector.shutdown)
+    except concurrent.futures.CancelledError:
+        exit(0)

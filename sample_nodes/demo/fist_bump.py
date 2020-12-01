@@ -8,6 +8,7 @@ from geometry_msgs.msg import Vector3
 from std_msgs.msg import String
 from anki_vector_ros.msg import Touch
 
+
 class FistBump:
     def __init__(self):
 
@@ -18,7 +19,6 @@ class FistBump:
         self.bumped = False
         self.start_sequence()
 
-
     def start_sequence(self):
         print("begin")
         self.speech_pub.publish("Give me a fist bump")
@@ -28,7 +28,6 @@ class FistBump:
             self.counter += 1
         else:
             self.counter = 0
-            
 
     def accel_callback(self, accel):
         print(accel.x)
@@ -38,4 +37,3 @@ class FistBump:
             self.speech_pub.publish("Hooray")
             self.bumped = True
         self.previous_accel = accel
-

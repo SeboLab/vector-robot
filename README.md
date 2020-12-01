@@ -84,6 +84,7 @@ Subscribe to these topics to access Vector's sensor readings
 * `/proximity`: `Proximity` message containing information with the robot's proximity to obstacles
 * `/status`: `RobotStatus` message with information about the robot's sensors and position
 * `/touch`: `Touch` message with the state and raw touch value of the robot's touch sensor
+* `/events/object`: `Object` message providing the pose, object type, ID, and other attributes of the objects that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/look_in_place` `/cube/info`: `LightCube` message providing various aspects of Vector's light cube
 
 #### Camera required
 
@@ -91,7 +92,6 @@ Enable publishing to these topics by specifying the `--camera` flag when launchi
 
 * `/camera`: ROS `Image` representation of the robot's front-facing camera. Use `cv_bridge` to decode this message into a OpenCV-compatible format
 * `/events/face`: `Face` message providing the pose, ID, and other attributes of the faces that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/find_faces`
-* `/events/object`: `Object` message providing the pose, object type, ID, and other attributes of the objects that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/look_in_place`
 
 ### Write-only topics
 
@@ -225,6 +225,10 @@ Provides a bounding box for a tracked object with respect to Vector's camera
 * `y_top_left`: y-coordinate of top-left corner of the box (`Float32`)
 * `width`: width of the box in pixels (`Float32`)
 * `height`: height of the box in pixels (`Float32`)
+
+#### `LightCube`
+
+To be completed...
 
 #### `RobotStatus`
 

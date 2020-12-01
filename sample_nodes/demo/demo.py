@@ -60,7 +60,7 @@ class DemoNode:
     def fist_bump_routine(self):
         state = FistBump()
         while not state.bumped:
-            sleep(.5)
+            sleep(0.5)
 
     def next_phase(self):
         # Insert more here

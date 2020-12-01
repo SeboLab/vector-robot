@@ -3,7 +3,6 @@ from time import sleep
 
 import rospy
 from rospy import Publisher
-from std_msgs.msg import Float32
 from anki_vector_ros.msg import RobotStatus
 from anki_vector_ros.msg import Drive
 
@@ -20,9 +19,9 @@ def main():
     sleep(0.5)
 
     print("Executing commands")
-    move_pub.publish(100., 100., 0., 0.)
+    move_pub.publish(100.0, 100.0, 0.0, 0.0)
     sleep(3.0)
-    move_pub.publish(0., 0., 0., 0.)
+    move_pub.publish(0.0, 0.0, 0.0, 0.0)
 
 
 if __name__ == "__main__":

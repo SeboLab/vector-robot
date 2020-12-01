@@ -84,6 +84,7 @@ def populate_message(message, vector_obj):
             continue
         if "__" in attr:
             continue
+
         setattr(message, attr, getattr(vector_obj, attr))
 
     return message

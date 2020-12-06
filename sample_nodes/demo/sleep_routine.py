@@ -61,7 +61,8 @@ class TuckSleepRoutine:
         if self.dark_img_count == 10:
             self.display_anim.set()
             self.speech_pub.publish("Thanks for tucking me in")
-            for i in range(2):
-                self.anim_pub.publish("anim_gotosleep_sleeploop_01")
-                sleep(1.0)
+
+            self.anim_pub.publish("anim_gotosleep_sleeploop_01")
+            sleep(5.0)
+            self.anim_pub.publish("anim_neutral_eyes_01")
             self.tucked = True

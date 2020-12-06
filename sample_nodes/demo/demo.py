@@ -9,6 +9,7 @@ from anki_vector_ros.msg import RobotStatus
 from idle_anim import IdlePetAnimation
 from sleep_routine import TuckSleepRoutine
 from fist_bump import FistBump
+from cube_routine import CubeRoutine
 
 """
 Sample program with a series of interactions with Vector
@@ -30,7 +31,8 @@ class DemoNode:
         self.fist_bump_routine()
         self.pet_routine()
         self.tuck_sleep_routine()
-        sleep(5.0)
+
+        self.cube_routine()
         self.speech_pub.publish("Let's go to the next phase")
         self.next_phase()
 
@@ -60,6 +62,11 @@ class DemoNode:
     def fist_bump_routine(self):
         state = FistBump()
         while not state.bumped:
+            sleep(0.5)
+
+    def cube_routine(self):
+        state = CubeRoutine()
+        while state.phase != 3:
             sleep(0.5)
 
     def next_phase(self):

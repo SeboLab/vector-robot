@@ -14,10 +14,10 @@ class FistBump:
         self.proximity_sub = Subscriber("/proximity", Proximity, self.proxim_callback)
         self.accel_sub = Subscriber("/accel", Vector3, self.accel_callback)
         self.bumped = False
+        self.counter = 0
         self.start_sequence()
 
     def start_sequence(self):
-        print("begin")
         self.speech_pub.publish("Give me a fist bump")
 
     def proxim_callback(self, proximity):
@@ -27,9 +27,11 @@ class FistBump:
             self.counter = 0
 
     def accel_callback(self, accel):
-        print(accel.x)
-        if self.counter >= 1 and abs(accel.x - self.previous_accel.x) > 100:
-            print("fistbump")
+        if (
+            not self.bumped
+            and self.counter >= 1
+            and abs(accel.x - self.previous_accel.x) > 100
+        ):
             self.anim_pub.publish("anim_fistbump_success_01")
             self.speech_pub.publish("Hooray")
             self.bumped = True

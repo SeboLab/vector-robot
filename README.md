@@ -283,7 +283,7 @@ Various boolean values representing Vector's state. You may use this message to 
 
 ## Demos
 
-The [`launch`](./launch/) and [`sample_nodes`](./sample_nodes/) contains several executable roslaunch and Python files with examples of using this package. For standalone Python files, ensure the `vector_ros` node is running beforehand.
+The [`launch`](./launch/) and [`sample_nodes`](./sample_nodes/) folders contain several executable roslaunch and Python files with examples of using this package. For standalone Python files, ensure the `vector_ros` node is running beforehand.
 
 * `hello_world.launch`: launches a script where Vector drives in a straight line, then stops
 * `lab_demo.launch`: **[to be completed]** lab demo where Vector drives off its base, runs an idle animation, and prompts the user for various interactions. These include petting Vector, tucking it into sleep, giving it a fistbump, and giving it a cube.

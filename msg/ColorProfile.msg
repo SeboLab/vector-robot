@@ -1,0 +1,3 @@
+float32 red_multiplier
+float32 green_multiplier
+float32 blue_multiplier

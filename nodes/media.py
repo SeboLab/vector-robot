@@ -14,12 +14,6 @@ class Media:
             "/anim/play_trigger", String, self.play_anim_trigger
         )
 
-        # with open("/home/name/catkin_ws/src/vector-robot/animations.md", "w+") as anim_file:
-        #     anim_file.write("## Animation List\n\n\n* ")
-        #     anim_file.write("\n* ".join(sorted(robot.anim.anim_list)))
-        #     anim_file.write("\n## Animation Trigger List\n\n\n* ")
-        #     anim_file.write("\n* ".join(sorted(robot.anim.anim_trigger_list)))
-
         # Audio
         self.audio_sub = Subscriber("/audio/play", String, self.play_wav)
         self.audio_vol_sub = Subscriber("/audio/vol", Int16, self.set_vol)

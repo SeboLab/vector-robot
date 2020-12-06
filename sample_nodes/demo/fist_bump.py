@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
-from time import sleep
-from threading import Event, Thread
 
 from rospy import Publisher, Subscriber
-from anki_vector_ros.msg import Pose, Proximity, RobotStatus, Touch
+from anki_vector_ros.msg import Proximity
 from geometry_msgs.msg import Vector3
 from std_msgs.msg import String
-from anki_vector_ros.msg import Touch
 
 
 class FistBump:

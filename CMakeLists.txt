@@ -28,6 +28,7 @@ add_message_files (
    ImageRect.msg
    Object.msg
    LightCube.msg
+   ColorProfile.msg
 )
 
 generate_messages (

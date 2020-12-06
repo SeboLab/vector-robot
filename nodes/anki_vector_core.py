@@ -54,10 +54,6 @@ class VectorNode:
         if camera:
             Thread(target=Camera, args=[self.robot]).start()
 
-        # TODO handle NavMapComponents
-        # World of the robot is best represented as Python objects; we can create
-        # custom routines to represent LightCubes and other objects via IDs
-
     def create_camera_thread(self):
         Camera(self.robot)
 
@@ -82,4 +78,4 @@ if __name__ == "__main__":
     try:
         rospy.on_shutdown(vector.shutdown)
     except concurrent.futures.CancelledError:
-        exit(0)
+        sys.exit(0)

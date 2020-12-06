@@ -7,7 +7,7 @@ ROS wrapper and startup code for the Anki Vector robot
 1. [Usage](#usage)
 2. [Topics](#topics)
     1. [Read-only](#read-only-topics)
-    2. [Write-only](#write-only-topics)
+    2. [Write](#write-topics)
 3. [Custom messages](#custom-messages)
 4. [Demos](#demos)
 
@@ -84,7 +84,8 @@ Subscribe to these topics to access Vector's sensor readings
 * `/proximity`: `Proximity` message containing information with the robot's proximity to obstacles
 * `/status`: `RobotStatus` message with information about the robot's sensors and position
 * `/touch`: `Touch` message with the state and raw touch value of the robot's touch sensor
-* `/events/object`: `Object` message providing the pose, object type, ID, and other attributes of the objects that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/look_in_place` `/cube/info`: `LightCube` message providing various aspects of Vector's light cube
+* `/events/object`: `Object` message providing the pose, object type, ID, and other attributes of the objects that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/look_in_place` 
+* `/cube/info`: `LightCube` message providing various sensor readings of Vector's light cube
 
 #### Camera required
 
@@ -93,7 +94,7 @@ Enable publishing to these topics by specifying the `--camera` flag when launchi
 * `/camera`: ROS `Image` representation of the robot's front-facing camera. Use `cv_bridge` to decode this message into a OpenCV-compatible format
 * `/events/face`: `Face` message providing the pose, ID, and other attributes of the faces that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/find_faces`
 
-### Write-only topics
+### Write topics
 
 Publish to these topics to make Vector move and perform other functions. Note that for all movement-based topics, Vector will prevent itself from falling from surfaces (e.g. desks), even when programmed to continue moving.
 
@@ -141,6 +142,12 @@ Note that the following routines only execute if Vector is currently detecting t
 * `/screen/image`: Receives an `String` message containing the absolute path on an image and displays it on Vector's screen. Resizes image as necessary
 * `/screen/display_duration`: Receives a `Float32` to set the display duration for colors and images on the screen. This must be set before publishing to `/screen` subtopics to take effect. Default is 5 seconds.
 
+#### Light cube behaviors
+
+* `/cube/color_profile`: Set a `ColorProfile` for the light cube, modifying the brightness of the red, blue, and green LEDs. Must be called before setting the colors of the cube to have an effect.
+* `/cube/lights`: Receives a `Color` message and sets the cube's four corners to the specified color
+* `/cube/lights_off`: Receives a `Bool` message with a `True` value to turn the cube's lights off
+* `/cube/flash_lights`: Receives a `Bool` message with a `True` value to rapidly flash the cube's lights, with white lights
 
 ## Custom Messages
 
@@ -179,9 +186,19 @@ Represents an RGB color combination
 * `green`: int value 0-255 
 * `blue`: int value 0-255
 
+
+#### `ColorProfile`
+
+Multiplies the intensity of a light cube's light color by the given `Float32` value
+
+* `red_multiplier`
+* `green_multiplier`
+* `blue_multiplier`
+
 #### `Proximity`
 
-A reading from Vector's proximity sensor
+Reading from Vector's proximity sensor
+
 * `distance`: `Float32` value, in mm
 * `found_object`: boolean value indicating if object is found by the sensor
 * `is_lift_in_fov`: boolean value indicating if Vector's lift is blocking its sensor
@@ -228,11 +245,23 @@ Provides a bounding box for a tracked object with respect to Vector's camera
 
 #### `LightCube`
 
-To be completed...
+Represents the state of a light cube
+
+* `object_id`: internal integer ID representing the connected cube
+* `is_visible`: boolean value providing if Vector can see the cube
+* `is_moving`: boolean value providing if the cube's accelerometer detects that it is moving
+* `last_moved_robot_timestamp`: the time the object was last moved in robot time
+* `last_moved_start_robot_timestamp`: the time the object more recently started moving in robot time
+* `last_moved_time`: the time the object was last moved in SDK time
+* `last_tapped_robot_timestamp`: the time the object was last tapped in robot time
+* `last_tapped_time`: the time the object was last tapped in SDK time
+* `top_face_orientation_rad`: angular distance from the current reported up axis
+* `pose`: the current `Pose` of the cube with respect to the robot. If the cube is currently not visible, this has zeroed values or will retain its last known position
 
 #### `RobotStatus`
 
 Various boolean values representing Vector's state. You may use this message to determine when all of Vector's nodes are online.
+
 * `are_motors_moving`
 * `are_wheels_moving`
 * `is_animating`

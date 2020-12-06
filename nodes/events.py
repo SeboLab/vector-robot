@@ -3,7 +3,7 @@ from anki_vector.events import Events
 
 from rospy import Publisher
 from anki_vector_ros.msg import Face, Object, ImageRect, Pose
-from sensors import populate_message
+from util import populate_message
 
 """
 Module with EventHandler to publish to ROS topics

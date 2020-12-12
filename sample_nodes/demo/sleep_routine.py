@@ -37,7 +37,9 @@ class TuckSleepRoutine:
     def start_anim(self):
         self.display_anim.clear()
         if not hasattr(self, "anim_thread"):
-            self.speech_pub.publish("I'm getting sleepy...")
+            self.speech_pub.publish(
+                "I'm getting sleepy... Can you wrap me in my blanket?"
+            )
             self.anim_pub.publish("anim_gotosleep_getin_01")
             self.anim_thread = Thread(target=self.animate)
             self.anim_thread.start()

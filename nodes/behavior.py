@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import colorsys
-from rospy import Subscriber
+from rospy import Subscriber, Publisher
 from std_msgs.msg import String, Int16, Float32, Bool
 
 import anki_vector
 
-from anki_vector_ros.msg import Dist, Pose, Color
+from anki_vector_ros.msg import Dist, Pose, Color, Response
 
 
 class Behavior:
@@ -65,17 +65,27 @@ class Behavior:
             "/behavior/pickup_object", Int16, self.pickup_object
         )
 
+        self.response_pub = Publisher("/behavior/response", Response, queue_size=10)
+
+    def publish_response(self, resp):
+        print(resp)
+        type_name = str(type(resp)).split(".")[-1][:-2]
+        result = resp.result.code if "result" in dir(resp) else -1
+        self.response_pub.publish(Response(resp.status.code, result, type_name))
+
     def drive_charger(self, bool_val):
         # True to drive on, false to drive off
         if bool_val.data:
-            self.robot.behavior.drive_on_charger()
+            resp = self.robot.behavior.drive_on_charger()
         else:
-            self.robot.behavior.drive_off_charger()
+            resp = self.robot.behavior.drive_off_charger()
+        self.publish_response(resp)
 
     def drive_straight(self, msg):
         dist = anki_vector.util.distance_mm(msg.distance)
         speed = anki_vector.util.speed_mmps(msg.speed)
-        self.robot.behavior.drive_straight(dist, speed)
+        resp = self.robot.behavior.drive_straight(dist, speed)
+        self.publish_response(resp)
 
     def find_faces(self, find):
         if find.data:
@@ -97,54 +107,66 @@ class Behavior:
             pose_props[attr] = getattr(pose, attr)
         pose_obj = anki_vector.util.Pose(**pose_props)
 
-        self.robot.behavior.go_to_pose(pose_obj)
+        resp = self.robot.behavior.go_to_pose(pose_obj)
+        self.publish_response(resp)
 
     def place_object_ground(self, retries):
-        self.robot.behavior.place_object_on_ground_here(retries.data)
+        resp = self.robot.behavior.place_object_on_ground_here(retries.data)
+        self.publish_response(resp)
 
     def roll_visible_cube(self, roll):
         if roll.data:
             self.robot.behavior.roll_visible_cube()
 
     def say_text(self, text):
-        self.robot.behavior.say_text(text.data)
+        self.publish_response(self.robot.behavior.say_text(text.data))
 
     def set_eye_color(self, color):
         hue, sat, _ = colorsys.rgb_to_hsv(color.red, color.green, color.blue)
-        self.robot.behavior.set_eye_color(hue, sat)
+        resp = self.robot.behavior.set_eye_color(hue, sat)
+        self.publish_response(resp)
 
     def set_head_angle(self, angle):
         angle_obj = anki_vector.util.Angle(radians=angle.data)
-        self.robot.behavior.set_head_angle(angle_obj)
+        resp = self.robot.behavior.set_head_angle(angle_obj)
+        self.publish_response(resp)
 
     def set_lift_height(self, height):
-        self.robot.behavior.set_lift_height(height.data)
+        resp = self.robot.behavior.set_lift_height(height.data)
+        self.publish_response(resp)
 
     def turn_in_place(self, angle):
         angle_obj = anki_vector.util.Angle(radians=angle.data)
-        self.robot.behavior.turn_in_place(angle_obj)
+        resp = self.robot.behavior.turn_in_place(angle_obj)
+        self.publish_response(resp)
 
     def turn_towards_face(self, face_id):
         face = self.robot.world.get_face(face_id.data)
-        self.robot.behavior.turn_towards_face(face)
+        resp = self.robot.behavior.turn_towards_face(face)
+        self.publish_response(resp)
 
     def roll_cube(self, object_id):
         obj = self.robot.world.get_object(object_id.data)
-        self.robot.behavior.roll_cube(obj)
+        resp = self.robot.behavior.roll_cube(obj)
+        self.publish_response(resp)
 
     def dock_with_cube(self, object_id):
         obj = self.robot.world.get_object(object_id.data)
-        self.robot.behavior.dock_with_cube(obj)
+        resp = self.robot.behavior.dock_with_cube(obj)
+        self.publish_response(resp)
 
     def pickup_object(self, object_id):
         obj = self.robot.world.get_object(object_id.data)
-        self.robot.behavior.pickup_object(obj)
+        resp = self.robot.behavior.pickup_object(obj)
+        self.publish_response(resp)
 
     def wheelie(self, object_id):
         obj = self.robot.world.get_object(object_id.data)
-        self.robot.behavior.pop_a_wheelie(obj)
+        resp = self.robot.behavior.pop_a_wheelie(obj)
+        self.publish_response(resp)
 
     def go_to_object(self, object_id):
         obj = self.robot.world.get_object(object_id.data)
         distance = 0  # Can modify this as needed
-        self.robot.behavior.go_to_object(obj, distance)
+        resp = self.robot.behavior.go_to_object(obj, distance)
+        self.publish_response(resp)

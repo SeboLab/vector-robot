@@ -16,6 +16,7 @@ class FistBump:
         self.bumped = False
         self.counter = 0
         self.start_sequence()
+        self.previous_accel = None
 
     def start_sequence(self):
         self.speech_pub.publish("Give me a fist bump")
@@ -28,11 +29,12 @@ class FistBump:
 
     def accel_callback(self, accel):
         if (
-            not self.bumped
+            self.previous_accel is not None
+            and not self.bumped
             and self.counter >= 1
             and abs(accel.x - self.previous_accel.x) > 100
         ):
             self.anim_pub.publish("anim_fistbump_success_01")
-            self.speech_pub.publish("Hooray")
+            self.speech_pub.publish("Wow! That was fun!")
             self.bumped = True
         self.previous_accel = accel

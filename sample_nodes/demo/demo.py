@@ -27,12 +27,11 @@ class DemoNode:
 
         sleep(0.08)
         self.init_drive()
-        sleep(2.0)
         self.fist_bump_routine()
         self.pet_routine()
+        self.cube_routine()
         self.tuck_sleep_routine()
 
-        self.cube_routine()
         self.speech_pub.publish("Let's go to the next phase")
         self.next_phase()
 

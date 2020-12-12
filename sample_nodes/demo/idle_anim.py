@@ -29,7 +29,7 @@ class IdlePetAnimation:
     def start_anim(self):
         self.display_anim.clear()
         if not hasattr(self, "anim_thread"):
-            self.speech_pub.publish("Do you want to pet me?")
+            self.speech_pub.publish("Do you want to pet my back?")
             self.anim_thread = Thread(target=self.animate)
             self.anim_thread.start()
 

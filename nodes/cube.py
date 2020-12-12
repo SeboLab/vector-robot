@@ -4,6 +4,7 @@ import rospy
 from rospy import Publisher, Subscriber
 from anki_vector.lights import Light, ColorProfile, Color
 from std_msgs.msg import Bool
+from time import sleep
 
 from anki_vector_ros.msg import (
     Pose,
@@ -34,6 +35,8 @@ class LightCube:
         self.light_off_sub = Subscriber("/cube/lights_off", Bool, self.set_lights_off)
         self.light_off_sub = Subscriber("/cube/flash_lights", Bool, self.flash_lights)
 
+        self.robot.world.connect_cube()
+        sleep(0.1)
         # Return cube to default state
         if self.get_cube() is not None:
             self.get_cube().set_lights_off()

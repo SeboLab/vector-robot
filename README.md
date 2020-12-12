@@ -86,6 +86,7 @@ Subscribe to these topics to access Vector's sensor readings
 * `/touch`: `Touch` message with the state and raw touch value of the robot's touch sensor
 * `/events/object`: `Object` message providing the pose, object type, ID, and other attributes of the objects that Vector detects with its camera. One method to begin detecting is to send a message to `/behavior/look_in_place` 
 * `/cube/info`: `LightCube` message providing various sensor readings of Vector's light cube
+* `/behavior/response`: `Response` message with the results of select commands issued to `/behavior`
 
 #### Camera required
 
@@ -279,6 +280,14 @@ Various boolean values representing Vector's state. You may use this message to 
 * `is_pathing`
 * `is_picked_up`
 * `is_robot_moving`
+
+#### `Response`
+
+The status and (optionally) result of a command published to `/behavior`
+
+* `status`: an integer [status code](https://sdk-resources.anki.com/vector/docs/proto.html#anki_vector/messaging/response_status.proto) indicating if the command has been received
+* `result`: an integer [action result code](https://sdk-resources.anki.com/vector/docs/proto.html#Anki.Vector.external_interface.ActionResult.ActionResultCode) indicating if the action (e.g. picking up a cube) has been completed successfully or possible reasons for failure. Some response types do not have a result code exposed by the API and will hold a value of `-1`.
+* `type`: a string indicating the type of the response. Refer [here](https://sdk-resources.anki.com/vector/docs/proto.html) to see possible options
 
 
 ## Demos

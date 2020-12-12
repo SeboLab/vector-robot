@@ -29,6 +29,7 @@ add_message_files (
    Object.msg
    LightCube.msg
    ColorProfile.msg
+   Response.msg
 )
 
 generate_messages (

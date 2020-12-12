@@ -32,7 +32,7 @@ class FistBump:
             self.previous_accel is not None
             and not self.bumped
             and self.counter >= 1
-            and abs(accel.x - self.previous_accel.x) > 100
+            and abs(accel.x - self.previous_accel.x) > 500
         ):
             self.anim_pub.publish("anim_fistbump_success_01")
             self.speech_pub.publish("Wow! That was fun!")

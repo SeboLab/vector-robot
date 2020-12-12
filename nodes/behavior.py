@@ -68,7 +68,6 @@ class Behavior:
         self.response_pub = Publisher("/behavior/response", Response, queue_size=10)
 
     def publish_response(self, resp):
-        print(resp)
         type_name = str(type(resp)).split(".")[-1][:-2]
         result = resp.result.code if "result" in dir(resp) else -1
         self.response_pub.publish(Response(resp.status.code, result, type_name))

@@ -13,6 +13,7 @@ from cube_routine import CubeRoutine
 
 """
 Sample program with a series of interactions with Vector
+Intended as a sequential showcase of our programmed interactions thus far.
 """
 
 
@@ -32,8 +33,8 @@ class DemoNode:
         self.cube_routine()
         self.tuck_sleep_routine()
 
-        self.speech_pub.publish("Let's go to the next phase")
-        self.next_phase()
+        self.anim_pub.publish("anim_neutral_eyes_01")
+        self.speech_pub.publish("Hope you had fun with me!")
 
     def init_drive(self):
         self.anim_trig_pub.publish("DriveStartHappy")
@@ -68,13 +69,9 @@ class DemoNode:
         while state.phase != 3:
             sleep(0.5)
 
-    def next_phase(self):
-        # Insert more here
-        self.anim_pub.publish("anim_neutral_eyes_01")
-
 
 if __name__ == "__main__":
-    rospy.init_node("vector_demo")
+    rospy.init_node("seq_demo")
     rospy.wait_for_message("/status", RobotStatus)
 
     DemoNode()

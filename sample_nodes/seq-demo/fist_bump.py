@@ -22,6 +22,7 @@ class FistBump:
         self.speech_pub.publish("Give me a fist bump")
 
     def proxim_callback(self, proximity):
+        print(proximity.distance)
         if proximity.distance <= 60:
             self.counter += 1
         else:
@@ -38,3 +39,10 @@ class FistBump:
             self.speech_pub.publish("Wow! That was fun!")
             self.bumped = True
         self.previous_accel = accel
+
+if __name__ == "__main__":
+    import rospy
+    rospy.init_node("fist_bump_test")
+    FistBump()
+    from time import sleep
+    sleep(10)

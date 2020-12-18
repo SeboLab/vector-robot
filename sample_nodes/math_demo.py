@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+"""Q+A demo interaction with Vector. Requires internet connection."""
+
 import random
 import sys
 from time import sleep
@@ -9,10 +12,6 @@ from std_msgs.msg import String, Float32
 from anki_vector_ros.msg import RobotStatus
 
 import speech_recognition as sr
-
-"""
-Q+A demo interaction with Vector. Requires internet connection.
-"""
 
 
 class MathDemoNode:
@@ -73,22 +72,8 @@ class MathDemoNode:
             print("[ERROR] Couldn't request results from Google {0}".format(e))
             return None
 
-    def generate_question(self):
-        operators = ["+", "times"]
-        a = random.randint(0, 10)
-        b = random.randint(0, 10)
-        op = random.choice(operators)
-
-        if op == "times":
-            ans = a * b
-        else:
-            ans = a + b
-        operation = f"{a} {op} {b}"
-
-        return (operation, ans)
-
     def ask_question(self):
-        operation, ans = self.generate_question()
+        operation, ans = generate_question()
         question = f"What is {operation}?"
         self.speech_pub.publish(question)
         text = None
@@ -118,6 +103,21 @@ class MathDemoNode:
         self.speech_pub.publish(f"Sorry, {operation} is {ans}.")
         sleep(4.0)
         return False
+
+
+def generate_question():
+    operators = ["+", "times"]
+    a = random.randint(0, 10)
+    b = random.randint(0, 10)
+    op = random.choice(operators)
+
+    if op == "times":
+        ans = a * b
+    else:
+        ans = a + b
+    operation = f"{a} {op} {b}"
+
+    return (operation, ans)
 
 
 if __name__ == "__main__":

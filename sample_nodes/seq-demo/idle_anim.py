@@ -38,9 +38,9 @@ class IdlePetAnimation:
 
     def animate(self):
         while not self.done:
-
+            print("Moving")
             # turns a random angle
-            turn_duration = random.random() + .6
+            turn_duration = random.random() + 0.6
             self.motor_drive_pub.publish(100, -100, 0, 0)
             self.theta += turn_duration * angle_multiplier
             sleep(turn_duration)
@@ -52,10 +52,10 @@ class IdlePetAnimation:
             time_moved = random.random() + 1
             sim_dest = numpy.array((0.0, 0.0))
             sim_dest[0] = (
-                    self.coords[0] + math.cos(math.radians(self.theta)) * time_moved
+                self.coords[0] + math.cos(math.radians(self.theta)) * time_moved
             )
             sim_dest[1] = (
-                    self.coords[1] + math.sin(math.radians(self.theta)) * time_moved
+                self.coords[1] + math.sin(math.radians(self.theta)) * time_moved
             )
             sim_dist = numpy.linalg.norm(sim_dest)
 
@@ -83,6 +83,7 @@ class IdlePetAnimation:
             self.path_is_blocked.set()
         else:
             self.path_is_blocked.clear()
+
 
 if __name__ == "__main__":
     rospy.init_node("idle_anim_test")

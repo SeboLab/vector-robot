@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+from time import sleep
 
 import rospy
 from rospy import Publisher, Subscriber
 from anki_vector.lights import Light, ColorProfile, Color
 from std_msgs.msg import Bool
-from time import sleep
 
 from anki_vector_ros.msg import (
     Pose,

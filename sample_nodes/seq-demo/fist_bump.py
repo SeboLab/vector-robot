@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+from time import sleep
 from rospy import Publisher, Subscriber
 from anki_vector_ros.msg import Proximity
 from geometry_msgs.msg import Vector3
@@ -40,9 +40,10 @@ class FistBump:
             self.bumped = True
         self.previous_accel = accel
 
+
 if __name__ == "__main__":
     import rospy
+
     rospy.init_node("fist_bump_test")
     FistBump()
-    from time import sleep
     sleep(10)

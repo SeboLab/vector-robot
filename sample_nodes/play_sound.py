@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+"""Sample program to make Vector play an audio file.
+
+Usage:
+python3 play_sound.py /absolute/dir/to/sound.wav
+"""
+
 from time import sleep
 import sys
 
@@ -6,13 +13,6 @@ import rospy
 from rospy import Publisher
 from std_msgs.msg import String, Int16
 from anki_vector_ros.msg import RobotStatus
-
-"""
-Sample program to make Vector play an audio file
-
-Usage:
-python3 play_sound.py /absolute/dir/to/sound.wav
-"""
 
 
 def play_file(file):

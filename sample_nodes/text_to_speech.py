@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
+"""Sample program to use Vector's voice synthesizer."""
+
 from time import sleep
 
 import rospy
 from rospy import Publisher
 from std_msgs.msg import String
 from anki_vector_ros.msg import RobotStatus
-
-"""
-Sample program to use Vector's voice synthesizer
-"""
 
 
 def main():

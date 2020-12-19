@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Example node of CV2 image connection."""
+
 from time import sleep
 from threading import Event, Thread
 import numpy as np
@@ -7,10 +9,6 @@ from rospy import Publisher, Subscriber
 from cv_bridge import CvBridge
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-
-"""
-Example node of CV2 image connection
-"""
 
 # Brightness value (in HSV) threshold for sleeping
 SLEEP_THRESH = 8.0

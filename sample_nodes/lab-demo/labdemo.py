@@ -2,7 +2,7 @@
 from time import sleep
 import rospy
 from rospy import Publisher
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 from anki_vector_ros.msg import RobotStatus
 
 """
@@ -56,13 +56,19 @@ class LabDemoNode:
         self.speech_pub = Publisher("/behavior/say_text", String, queue_size=1)
         self.anim_pub = Publisher("/anim/play", String, queue_size=1)
         self.anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
-
+        self.idle_pub = Publisher("/labdemo/idle", Bool, queue_size=1)
         # Wait to setup publishers
         sleep(0.5)
+
+        self.init_demo()
+
+    def init_demo(self):
         print("Starting!")
         self.speech_pub.publish("Hi, my name is Vector!")
         sleep(0.5)
         self.anim_pub.publish("anim_eyepose_happy")
+        sleep(1.0)
+        self.idle_pub.publish(True)
 
 
 if __name__ == "__main__":
@@ -70,3 +76,4 @@ if __name__ == "__main__":
     rospy.wait_for_message("/status", RobotStatus)
 
     LabDemoNode()
+    rospy.spin()

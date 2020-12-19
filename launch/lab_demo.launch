@@ -1,0 +1,8 @@
+<launch>
+    <include file="$(find anki_vector_ros)/launch/vector_core.launch">
+        <arg name="camera" value="true"/>
+    </include>
+    <node name="labdemo" pkg="anki_vector_ros" type="labdemo.py"/>
+    <node name="idle_anim" pkg="anki_vector_ros" type="idle_anim.py"/>
+    <node name="fistbump_detector" pkg="anki_vector_ros" type="fistbump_detect.py"/>
+</launch>

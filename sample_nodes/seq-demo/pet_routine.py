@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
+"""Example node of idle animation detection and interruption."""
+
 from time import sleep
 from threading import Event, Thread
 
 from rospy import Publisher, Subscriber
 from std_msgs.msg import String
 from anki_vector_ros.msg import Touch
-
-"""
-Example node of idle animation detection and interruption
-"""
 
 
 class IdlePetAnimation:

@@ -77,5 +77,5 @@ if __name__ == "__main__":
 
     try:
         rospy.on_shutdown(vector.shutdown)
-    except concurrent.futures.CancelledError:
+    except (concurrent.futures.CancelledError, RuntimeError):
         sys.exit(0)

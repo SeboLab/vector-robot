@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
+"""Sample program to make Vector move."""
+
 from time import sleep
 
 import rospy
 from rospy import Publisher
 from anki_vector_ros.msg import RobotStatus
 from anki_vector_ros.msg import Drive
-
-"""
-Sample program to make Vector move
-"""
 
 
 def main():

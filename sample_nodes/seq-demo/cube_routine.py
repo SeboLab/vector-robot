@@ -1,3 +1,8 @@
+"""Routine to have Vector prompt users for its light cube, then have Vector interact with it.
+
+Vector randomly chooses between doing a wheelie and lifting the cube and setting it down again.
+"""
+
 import random
 from time import sleep
 

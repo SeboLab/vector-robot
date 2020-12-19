@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""Sample program with a series of interactions with Vector.
+
+Intended as a sequential showcase of our programmed interactions thus far.
+"""
+
 from time import sleep
 
 import rospy
@@ -6,15 +11,10 @@ from rospy import Publisher
 from std_msgs.msg import String, Bool
 from anki_vector_ros.msg import RobotStatus
 
-from idle_anim import IdlePetAnimation
+from pet_routine import IdlePetAnimation
 from sleep_routine import TuckSleepRoutine
 from fist_bump import FistBump
 from cube_routine import CubeRoutine
-
-"""
-Sample program with a series of interactions with Vector
-Intended as a sequential showcase of our programmed interactions thus far.
-"""
 
 
 class DemoNode:

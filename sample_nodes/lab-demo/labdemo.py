@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
-from time import sleep
-import rospy
-from rospy import Publisher
-from std_msgs.msg import String, Bool
-from anki_vector_ros.msg import RobotStatus
 
-"""
-Sample program with continuous looped interactions with Vector, WIP.
+"""Sample program with continuous looped interactions with Vector, WIP.
 
 Prompts:
     These randomly occur every 15 seconds of holding the idle animation. Upon completing
@@ -44,9 +38,13 @@ Triggers and responses:
         React to fistbump
     Cube is picked up by a user, then put into Vector's view:
         Perform a wheelie or do cube pickup routine
-
-TODO: Instead of timer-based actions, use response callbacks to determine state
 """
+
+from time import sleep
+import rospy
+from rospy import Publisher
+from std_msgs.msg import String, Bool
+from anki_vector_ros.msg import RobotStatus
 
 
 class LabDemoNode:
@@ -67,7 +65,7 @@ class LabDemoNode:
         self.speech_pub.publish("Hi, my name is Vector!")
         sleep(0.5)
         self.anim_pub.publish("anim_eyepose_happy")
-        sleep(1.0)
+        sleep(5.0)
         self.idle_pub.publish(True)
 
 

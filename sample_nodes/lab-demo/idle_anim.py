@@ -8,7 +8,6 @@ It will also avoid obstacles by using the proximity sensor.
 import math
 import random
 import time
-from time import sleep
 from threading import Event
 
 import numpy
@@ -24,7 +23,6 @@ BASE_SPEED = 50  # [mm/s]
 
 class IdleAnimation:
     def __init__(self):
-        self.anim_pub = Publisher("/anim/play", String, queue_size=1)
         self.motor_drive_pub = Publisher("/motors/wheels", Drive, queue_size=1)
         self.motor_stop_pub = Publisher("motors/stop", Bool, queue_size=1)
         self.proximity_sub = Subscriber("/proximity", Proximity, self.proxim_callback)

@@ -22,7 +22,7 @@ ANGLE_MULTIPLIER = 120
 BASE_SPEED = 50  # [mm/s]
 
 
-class IdlePetAnimation:
+class IdleAnimation:
     def __init__(self):
         self.anim_pub = Publisher("/anim/play", String, queue_size=1)
         self.motor_drive_pub = Publisher("/motors/wheels", Drive, queue_size=1)
@@ -31,7 +31,7 @@ class IdlePetAnimation:
 
         Subscriber("/labdemo/idle", Bool, self.hold_callback)
 
-        self.done = False
+        self.hold = Event()
         self.coords = numpy.array((0.0, 0.0))
         self.theta = 0
         self.path_is_blocked = Event()
@@ -39,22 +39,27 @@ class IdlePetAnimation:
     def hold_callback(self, msg):
         if msg.data:
             # Received a signal saying to idle
-            self.done = False
+            self.hold.clear()
+            self.path_is_blocked.clear()
             self.animate()
-        elif self.done:
-            self.done = True
-
-    def animate(self):
-        while not self.done:
-            print("Moving")
-            # turns a random angle
-            turn_duration = random.random() + 0.6
-            self.motor_drive_pub.publish(BASE_SPEED, -BASE_SPEED, 0, 0)
-            self.theta += turn_duration * ANGLE_MULTIPLIER
-            sleep(turn_duration)
+            print("Start idle")
+        else:
+            print("Stop idle")
+            self.hold.set()
+            self.path_is_blocked.set()
             self.motor_stop_pub.publish(True)
 
-            sleep(random.random() * 3)
+    def animate(self):
+        while not self.hold.is_set():
+            # turns a random angle
+            turn_duration = random.random() + 0.6
+
+            self.motor_drive_pub.publish(BASE_SPEED, -BASE_SPEED, 0, 0)
+            self.theta += turn_duration * ANGLE_MULTIPLIER
+            self.hold.wait(turn_duration)
+            self.motor_stop_pub.publish(True)
+
+            self.hold.wait(random.random() * 3)
 
             # simulates where it will end up if it moves forward a random distance
             time_moved = random.random() + 1
@@ -68,13 +73,13 @@ class IdlePetAnimation:
             sim_dist = numpy.linalg.norm(sim_dest)
 
             # vector only moves if it won't end up too far from the origin
-            if sim_dist < 5 and not self.done:
+            if sim_dist < 5 and not self.hold.is_set():
                 self.motor_drive_pub.publish(BASE_SPEED, BASE_SPEED, 0, 0)
                 start_time = time.time()
                 self.path_is_blocked.wait(time_moved)
 
                 # if it stopped because an obstacle
-                if self.path_is_blocked.isSet():
+                if self.path_is_blocked.is_set():
                     time_passed = time.time() - start_time
                     self.coords[0] += math.cos(math.radians(self.theta)) * time_passed
                     self.coords[1] += math.sin(math.radians(self.theta)) * time_passed
@@ -83,10 +88,9 @@ class IdlePetAnimation:
 
                 self.motor_stop_pub.publish(True)
 
-                sleep(random.random() * 2)
+                self.hold.wait(random.random() * 2)
 
     def proxim_callback(self, proxim):
-        print(proxim.distance)
         if proxim.distance < 50:
             self.path_is_blocked.set()
         else:
@@ -96,5 +100,5 @@ class IdlePetAnimation:
 if __name__ == "__main__":
     rospy.init_node("idle_anim")
     rospy.wait_for_message("/status", RobotStatus)
-    IdlePetAnimation()
+    IdleAnimation()
     rospy.spin()

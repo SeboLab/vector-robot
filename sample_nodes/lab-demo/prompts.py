@@ -24,6 +24,8 @@ class Prompts:
         self.idling = False
         self.prompting = True
         self.prompt_queued = False
+        self.prompts = [self.prompt_fistbump, self.prompt_pet, self.prompt_cube]
+        self.last_prompt = -1
         Subscriber("/labdemo/idle", Bool, self.idle_callback)
         Subscriber("/labdemo/prompt", Bool, self.prompting_callback)
 
@@ -42,10 +44,15 @@ class Prompts:
             # Robot is still idling, prompt user
             self.idle_pub.publish(False)
             self.prompt_pub.publish(True)
-            prompt = random.choice(
-                [self.prompt_fistbump, self.prompt_pet, self.prompt_cube]
-            )
+            
+            prompt_i = random.randint(0, len(self.prompts) - 1)
+            while prompt_i == self.last_prompt:
+                prompt_i = random.randint(0, len(self.prompts) - 1)
+
+            self.last_prompt = prompt_i
+            prompt = self.prompts[prompt_i]
             prompt()
+
             sleep(15.0)  # Wait for user response
             self.prompt_queued = False
             # User hasn't evoked a response from Vector yet, return to idle

@@ -14,7 +14,7 @@ import numpy
 import rospy
 from rospy import Publisher, Subscriber
 from anki_vector_ros.msg import Proximity, Drive, RobotStatus
-from std_msgs.msg import String, Bool
+from std_msgs.msg import Bool
 
 
 ANGLE_MULTIPLIER = 120

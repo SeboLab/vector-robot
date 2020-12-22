@@ -14,7 +14,7 @@ import numpy
 import rospy
 from rospy import Publisher, Subscriber
 from anki_vector_ros.msg import Proximity, Drive, RobotStatus
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Float32
 
 
 ANGLE_MULTIPLIER = 120
@@ -25,6 +25,7 @@ class IdleAnimation:
     def __init__(self):
         self.motor_drive_pub = Publisher("/motors/wheels", Drive, queue_size=1)
         self.motor_stop_pub = Publisher("motors/stop", Bool, queue_size=1)
+        self.lift_pub = Publisher("/behavior/lift_height", Float32, queue_size=1)
         self.proximity_sub = Subscriber("/proximity", Proximity, self.proxim_callback)
 
         Subscriber("/labdemo/idle", Bool, self.hold_callback)
@@ -72,6 +73,7 @@ class IdleAnimation:
 
             # vector only moves if it won't end up too far from the origin
             if sim_dist < 5 and not self.hold.is_set():
+                self.lift_pub.publish(0)
                 self.motor_drive_pub.publish(BASE_SPEED, BASE_SPEED, 0, 0)
                 start_time = time.time()
                 self.path_is_blocked.wait(time_moved)

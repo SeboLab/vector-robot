@@ -30,13 +30,14 @@ class FistBump:
         self.lift_pub.publish(0.6)
 
     def proxim_callback(self, proximity):
-        print(proximity.distance)
+        # print(proximity.distance)
         if proximity.distance <= 60:
             self.counter += 1
         else:
             self.counter = 0
 
     def accel_callback(self, accel):
+        print(accel.x)
         if (
             self.previous_accel is not None
             and not self.bumped

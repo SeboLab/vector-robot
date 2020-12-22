@@ -19,13 +19,15 @@ class FistBumpReceiver(PromptReceiver):
         self.previous_accel = None
 
     def proxim_callback(self, prox_msg):
-        print("Proximity:", prox_msg.distance)
+        #print("Proximity:", prox_msg.distance)
         if prox_msg.distance <= 60 and not prox_msg.is_lift_in_fov:
             self.counter += 1
         else:
             self.counter = 0
 
     def accel_callback(self, accel):
+        if self.previous_accel is not None:
+            print("Acceleration:", accel.x - self.previous_accel.x)
         if (
             self.previous_accel is not None
             and self.counter >= 1

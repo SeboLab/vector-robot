@@ -38,14 +38,17 @@ class IdleAnimation:
     def hold_callback(self, msg):
         if msg.data:
             # Received a signal saying to idle
+            print("Start idle")
             self.hold.clear()
             self.path_is_blocked.clear()
             self.animate()
-            print("Start idle")
         else:
             print("Stop idle")
             self.hold.set()
             self.path_is_blocked.set()
+
+            # Final failsafe due to race conditions
+            time.sleep(0.1)
             self.motor_stop_pub.publish(True)
 
     def animate(self):
@@ -91,7 +94,7 @@ class IdleAnimation:
                 self.hold.wait(random.random() * 2)
 
     def proxim_callback(self, proxim):
-        if proxim.distance < 50:
+        if proxim.distance < 50 and not proxim.is_lift_in_fov:
             self.path_is_blocked.set()
         else:
             self.path_is_blocked.clear()

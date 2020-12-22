@@ -1,11 +1,11 @@
 <launch>
     <include file="$(find anki_vector_ros)/launch/vector_core.launch">
-        <arg name="camera" value="true"/>
+        <arg name="camera" value="false"/>
     </include>
     <node name="labdemo" pkg="anki_vector_ros" type="labdemo.py"/>
     <node name="idle_anim" pkg="anki_vector_ros" type="idle_anim.py" output="screen"/>
     <node name="fist_bump_detector" pkg="anki_vector_ros" type="fistbump_detect.py" output="screen"/>
     <node name="pet_detector" pkg="anki_vector_ros" type="pet_detect.py"/>
-    <node name="cube_detector" pkg="anki_vector_ros" type="cube_detect.py"/>
+    <node name="cube_detector" pkg="anki_vector_ros" type="cube_detect.py" output="screen"/>
     <node name="vector_prompts" pkg="anki_vector_ros" type="prompts.py"/>
 </launch>

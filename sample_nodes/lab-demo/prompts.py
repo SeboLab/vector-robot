@@ -26,6 +26,7 @@ class Prompts:
         self.prompt_queued = False
         self.prompts = [self.prompt_fistbump, self.prompt_pet, self.prompt_cube]
         self.last_prompt = -1
+
         Subscriber("/labdemo/idle", Bool, self.idle_callback)
         Subscriber("/labdemo/prompt", Bool, self.prompting_callback)
 
@@ -35,16 +36,18 @@ class Prompts:
         if msg.data and not self.prompt_queued:
             # Let Vector idle for some period
             self.prompt_queued = True
-            sleep(random.randint(5, 10))
+            sleep(random.randint(3, 7))
 
             # Robot is no longer idling, no need to prompt
             if not self.idling:
+                self.prompt_queued = False
                 return
 
             # Robot is still idling, prompt user
             self.idle_pub.publish(False)
             self.prompt_pub.publish(True)
 
+            # Prevent same prompts in a row
             prompt_i = random.randint(0, len(self.prompts) - 1)
             while prompt_i == self.last_prompt:
                 prompt_i = random.randint(0, len(self.prompts) - 1)
@@ -57,6 +60,7 @@ class Prompts:
             self.prompt_queued = False
             # User hasn't evoked a response from Vector yet, return to idle
             if self.prompting:
+                self.prompt_pub.publish(True)
                 self.idle_pub.publish(True)
 
     def prompting_callback(self, msg):

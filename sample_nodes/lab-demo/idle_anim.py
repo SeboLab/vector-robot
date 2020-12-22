@@ -27,6 +27,7 @@ class IdleAnimation:
         self.motor_stop_pub = Publisher("motors/stop", Bool, queue_size=1)
         self.lift_pub = Publisher("/behavior/lift_height", Float32, queue_size=1)
         self.proximity_sub = Subscriber("/proximity", Proximity, self.proxim_callback)
+        self.prompt_pub = Publisher("/labdemo/prompt", Bool, queue_size=1)
 
         Subscriber("/labdemo/idle", Bool, self.hold_callback)
 
@@ -48,14 +49,17 @@ class IdleAnimation:
             self.path_is_blocked.set()
 
             # Final failsafe due to race conditions
-            time.sleep(0.1)
+            time.sleep(0.2)
             self.motor_stop_pub.publish(True)
 
     def animate(self):
         while not self.hold.is_set():
             # turns a random angle
+            self.prompt_pub.publish(True)
             turn_duration = random.random() + 0.6
 
+            if self.hold.is_set():
+                return
             self.motor_drive_pub.publish(BASE_SPEED, -BASE_SPEED, 0, 0)
             self.theta += turn_duration * ANGLE_MULTIPLIER
             self.hold.wait(turn_duration)
@@ -75,8 +79,8 @@ class IdleAnimation:
             sim_dist = numpy.linalg.norm(sim_dest)
 
             # vector only moves if it won't end up too far from the origin
-            if sim_dist < 5 and not self.hold.is_set():
-                self.lift_pub.publish(0)
+            if sim_dist < 5.0 and not self.hold.is_set():
+                self.lift_pub.publish(0.0)
                 self.motor_drive_pub.publish(BASE_SPEED, BASE_SPEED, 0, 0)
                 start_time = time.time()
                 self.path_is_blocked.wait(time_moved)

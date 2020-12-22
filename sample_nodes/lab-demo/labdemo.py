@@ -55,6 +55,8 @@ class LabDemoNode:
         self.anim_pub = Publisher("/anim/play", String, queue_size=1)
         self.anim_trig_pub = Publisher("/anim/play_trigger", String, queue_size=1)
         self.idle_pub = Publisher("/labdemo/idle", Bool, queue_size=1)
+        self.prompt_pub = Publisher("/labdemo/prompt", Bool, queue_size=1)
+
         # Wait to setup publishers
         sleep(0.5)
 
@@ -67,6 +69,7 @@ class LabDemoNode:
         self.anim_pub.publish("anim_eyepose_happy")
         sleep(5.0)
         self.idle_pub.publish(True)
+        self.prompt_pub.publish(True)
 
 
 if __name__ == "__main__":

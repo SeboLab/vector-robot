@@ -6,6 +6,6 @@
     <node name="idle_anim" pkg="anki_vector_ros" type="idle_anim.py" output="screen"/>
     <node name="fistbump_detector" pkg="anki_vector_ros" type="fistbump_detect.py"/>
     <node name="pet_detector" pkg="anki_vector_ros" type="pet_detect.py"/>
-    <node name="cube_detector" pkg="anki_vector_ros" type="cube_detect.py" output="screen"/>
+    <node name="cube_detector" pkg="anki_vector_ros" type="cube_detect.py"/>
     <node name="vector_prompts" pkg="anki_vector_ros" type="prompts.py"/>
 </launch>

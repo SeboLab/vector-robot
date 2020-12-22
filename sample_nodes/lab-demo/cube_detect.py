@@ -109,7 +109,6 @@ class CubeReceiver(PromptReceiver):
             self.end_react()
 
     def end_react(self):
-        self.stop_light_pub.publish(True)
         self.cube_had_initial_pickup = False
         self.stop_light_pub.publish(True)
         self.reacting = False

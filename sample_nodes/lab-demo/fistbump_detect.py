@@ -29,7 +29,7 @@ class FistBumpReceiver(PromptReceiver):
         if (
             self.previous_accel is not None
             and self.counter >= 1
-            and abs(accel.x - self.previous_accel.x) > 600
+            and abs(accel.x - self.previous_accel.x) > 550
             and not self.reacting
             and self.prompting
         ):

@@ -34,13 +34,13 @@ class CubeReceiver(PromptReceiver):
     def process_cube_state(self, cube_msg):
         if cube_msg.is_moving:
             print("Cube moving!")
-            self.idle_pub.publish(False)
             if not self.cube_had_initial_pickup:
                 # User has picked up the cube, about to set it down
                 self.cube_had_initial_pickup = True
             self.stop_light_pub.publish(True)
+            self.idle_pub.publish(False)
         elif self.prompting and not self.reacting and self.cube_had_initial_pickup:
-            sleep(0.2)
+            # sleep(0.1)
             if cube_msg.is_visible:
                 self.cube_react(cube_msg.object_id)
 
@@ -79,6 +79,8 @@ class CubeReceiver(PromptReceiver):
             self.lift_pub.publish(0.0)
             sleep(2.0)
             self.drive_pub.publish(Dist(-80, 30))
+            sleep(3.0)
+            self.end_react()
 
     def process_behavior_response(self, resp_msg):
         if not self.reacting:
@@ -104,11 +106,10 @@ class CubeReceiver(PromptReceiver):
             if resp_msg.type == "PopAWheelieResponse":
                 # Wait for robot to right itself
                 sleep(8.5)
-
-            self.stop_light_pub.publish(True)
             self.end_react()
 
     def end_react(self):
+        self.stop_light_pub.publish(True)
         self.cube_had_initial_pickup = False
         self.stop_light_pub.publish(True)
         self.reacting = False

@@ -44,7 +44,7 @@ class Prompts:
             # Robot is still idling, prompt user
             self.idle_pub.publish(False)
             self.prompt_pub.publish(True)
-            
+
             prompt_i = random.randint(0, len(self.prompts) - 1)
             while prompt_i == self.last_prompt:
                 prompt_i = random.randint(0, len(self.prompts) - 1)

@@ -73,6 +73,7 @@ Subscribe to these topics to access Vector's sensor readings
 
 * `/accel`: `Vector3` reading of the robot's XYZ acceleration
 * `/gyro`: `Vector3` reading of the robot's XYZ tilt
+* `/battery`: Current voltage level of the robot's battery. Low battery is considered at 3.6 V or less.
 * `/carry_object`: integer ID of the object the robot is currently carrying (-1 if none)
 * `/head_angle`: Vector's head angle (in radians)
 * `/head_tracking_object`: integer ID of the object that the head is tracking to (-1 if none)

@@ -19,6 +19,7 @@ class Sensors:
         self.gyro_pub = Publisher("/gyro", Vector3, queue_size=1)
         self.carry_object_pub = Publisher("/carry_object", Int16, queue_size=1)
         self.angle_pub = Publisher("/head_angle", Float32, queue_size=1)
+        self.battery_pub = Publisher("/battery", Float32, queue_size=1)
         self.tracking_pub = Publisher("/head_tracking_object", Int16, queue_size=1)
 
         # This is in mm/sec
@@ -34,6 +35,7 @@ class Sensors:
         self.status_pub = Publisher("/status", RobotStatus, queue_size=1)
         self.touch_pub = Publisher("/touch", Touch, queue_size=1)
 
+
         self.publish_sensor_feed()
 
     def publish_sensor_feed(self):
@@ -42,6 +44,7 @@ class Sensors:
             self.accel_pub.publish(**util.convert_vector3(self.robot.accel))
             self.gyro_pub.publish(**util.convert_vector3(self.robot.gyro))
             self.angle_pub.publish(self.robot.head_angle_rad)
+            self.battery_pub.publish(self.robot.get_battery_state().battery_volts)
             self.tracking_pub.publish(self.robot.head_tracking_object_id)
             self.left_wheel_pub.publish(self.robot.left_wheel_speed_mmps)
             self.right_wheel_pub.publish(self.robot.right_wheel_speed_mmps)

@@ -296,7 +296,7 @@ The status and (optionally) result of a command published to `/behavior`
 The [`launch`](./launch/) and [`sample_nodes`](./sample_nodes/) folders contain several executable roslaunch and Python files with examples of using this package. For standalone Python files, ensure the `vector_ros` node is running beforehand.
 
 * `hello_world.launch`: launches a script where Vector drives in a straight line, then stops
-* `lab_demo.launch`: **[to be completed]** lab demo where Vector drives off its base, runs an idle animation, and prompts the user for various interactions. These include petting Vector, tucking it into sleep, giving it a fistbump, and giving it a cube.
+* `lab_demo.launch`: continuous lab demo where Vector drives off its base, runs an idle animation, and prompts the user for various interactions and responds to them. These include petting Vector, [tucking it into sleep](https://drive.google.com/file/d/17Y_z-SmcwopfTtOYCYtyy1H7Fr6nSKx8/view?usp=sharing), [giving it a fistbump, and giving it a cube](https://drive.google.com/file/d/1HXg0o75CS0so_P3DUJmZOWOWpET62BLm/view?usp=sharing) to perform an action. The demo uses a ROS node-based architecture to communicate between prompts and responses.
 * `display_image.py`: displays an image for a specified duration on Vector's screen
 * `play_sound.py`: plays a sound file in the correct format (see above) at a specified volume
 * `text_to_speech.py`: script to continuously try out Vector's voice synthesizer, converting user input text to speech

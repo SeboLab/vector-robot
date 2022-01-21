@@ -222,7 +222,7 @@ Reading from Vector's touch sensor
   * 0: invalid object
   * 1: unknown object
   * 2: Light Cube. Note that Vector can recognize at most one Light Cube at a time
-  * 3: charger
+  * 6: charger
   * 15: custom object
 * `is_active`: retrieves the state of the object with respect to Vector's connection
 * `img_rect`: `ImageRect` message enclosing the object in a bounding box with respect to Vector's camera

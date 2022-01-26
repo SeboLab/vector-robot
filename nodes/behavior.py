@@ -168,6 +168,6 @@ class Behavior:
 
     def go_to_object(self, object_id):
         obj = self.robot.world.get_object(object_id.data)
-        distance = 0  # Can modify this as needed
+        distance = anki_vector.util.Distance(0)  # Can modify this as needed
         resp = self.robot.behavior.go_to_object(obj, distance)
         self.publish_response(resp)

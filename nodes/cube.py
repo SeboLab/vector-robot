@@ -3,6 +3,7 @@ from time import sleep
 
 import rospy
 from rospy import Publisher, Subscriber
+import anki_vector.exceptions
 from anki_vector.lights import Light, ColorProfile, Color
 from std_msgs.msg import Bool
 
@@ -66,17 +67,20 @@ class LightCube:
 
     def publish_cube(self):
         while not rospy.is_shutdown():
-            cube = self.get_cube()
-            if cube is not None:
-                msg = populate_message(LightCubeMsg(), cube)
+            try:
+                cube = self.get_cube()
+                if cube is not None:
+                    msg = populate_message(LightCubeMsg(), cube)
 
-                if cube.pose is not None:
-                    msg.pose = populate_message(
-                        Pose(), cube.pose.to_proto_pose_struct()
-                    )
-                else:
-                    msg.pose = Pose()
+                    if cube.pose is not None:
+                        msg.pose = populate_message(
+                            Pose(), cube.pose.to_proto_pose_struct()
+                        )
+                    else:
+                        msg.pose = Pose()
 
-                self.cube_info_pub.publish(msg)
+                    self.cube_info_pub.publish(msg)
 
-            self.rate.sleep()
+                self.rate.sleep()
+            except anki_vector.exceptions.VectorConnectionException:
+                self.robot.connect()

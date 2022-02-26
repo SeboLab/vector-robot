@@ -1,9 +1,11 @@
 <launch>
 	<arg name="camera" default="false" doc="enable/disable Vector's camera feed"/>
+	<arg name="serial" default="NULL" doc="serial number of Vector to connect to"/>
 	<group if="$(arg camera)">
-		<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py" args="--camera" output="screen" />
+		<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py" args="--camera --serial $(arg serial)" output="screen" />
 	</group>
 	<group unless="$(arg camera)">
-		<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py"  output="screen" />
+		<node name="vector_ros" pkg="anki_vector_ros" type="anki_vector_core.py" 
+		args="--serial $(arg serial)" output="screen" />
 	</group>
 </launch>

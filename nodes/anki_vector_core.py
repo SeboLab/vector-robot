@@ -24,10 +24,10 @@ from cube import LightCube
 
 
 class VectorNode:
-    def __init__(self, publish_rate=10, camera=False):
+    def __init__(self, publish_rate=10, camera=False, serial=None):
         self.rate = rospy.Rate(publish_rate)
-
-        self.robot = anki_vector.Robot(enable_face_detection=camera)
+        print(serial)
+        self.robot = anki_vector.Robot(enable_face_detection=camera, serial=serial)
 
         try:
             self.robot.connect(timeout=20)
@@ -45,8 +45,6 @@ class VectorNode:
         self.vision_control = Vision(self.robot)
         self.event_handler = EventHandler(self.robot)
 
-        self.async_robot = anki_vector.AsyncRobot()
-        self.async_robot.connect()
 
         # Needs to be async due to continuous publishing
         Thread(target=Sensors, args=[self.robot, self.rate]).start()
@@ -68,11 +66,15 @@ class VectorNode:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--camera", action="store_true")
+    parser.add_argument("--serial", default=None, nargs="?", type=str)
     args, _ = parser.parse_known_args()
+
+    if args.serial == "NULL":
+        args.serial = None
 
     rospy.init_node("vector_ros")
 
-    vector = VectorNode(camera=args.camera)
+    vector = VectorNode(camera=args.camera, serial=args.serial)
     rospy.spin()
 
     try:

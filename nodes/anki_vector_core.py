@@ -45,7 +45,6 @@ class VectorNode:
         self.vision_control = Vision(self.robot)
         self.event_handler = EventHandler(self.robot)
 
-
         # Needs to be async due to continuous publishing
         Thread(target=Sensors, args=[self.robot, self.rate]).start()
         Thread(target=LightCube, args=[self.robot, self.rate]).start()

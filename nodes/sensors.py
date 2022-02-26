@@ -36,7 +36,6 @@ class Sensors:
         self.status_pub = Publisher("/status", RobotStatus, queue_size=1)
         self.touch_pub = Publisher("/touch", Touch, queue_size=1)
 
-
         self.publish_sensor_feed()
 
     def publish_sensor_feed(self):

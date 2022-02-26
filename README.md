@@ -24,18 +24,20 @@ ROS wrapper and startup code for the Anki Vector robot
 8. Launch an instance of the core `vector_ros` node:
 
 ```
-roslaunch launch/vector_core.launch
+roslaunch launch/vector_core.launch [serial:=<Vector serial number>]
 ```
 
 The node may also be run directly via Python if `roscore` is running:
 
 ```
-python3 nodes/anki_vector_core.py
+python3 nodes/anki_vector_core.py [--serial <Vector serial number>]
 ```
 
 You may also wish to create your own `.launch` files incorporating custom nodes. See [`hello_world.launch`](./launch/hello_world.launch) for an example.
 
-**Note:** Ensure you aren't using a VPN before connecting to Vector
+**Notes**
+1. Ensure you aren't using a VPN before connecting to Vector
+2. The `serial` parameter is only required if there are multiple Vectors listed in your `.anki_vector/sdk_config.ini` file. Otherwise, the package will connect to the default Vector.
 
 ### Using the camera
 

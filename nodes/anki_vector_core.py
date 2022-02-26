@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""A ROS node for interfacing with the Anki Vector's core sensors and motors.
-
-This is a placeholder name/format; plan on dividing this up
-into different nodes/classes based on functionality
-"""
+"""A ROS node for interfacing with the Anki Vector's core sensors and motors."""
 import sys
 import argparse
 from threading import Thread
@@ -26,7 +22,7 @@ from cube import LightCube
 class VectorNode:
     def __init__(self, publish_rate=10, camera=False, serial=None):
         self.rate = rospy.Rate(publish_rate)
-        print(serial)
+
         self.robot = anki_vector.Robot(enable_face_detection=camera, serial=serial)
 
         try:
@@ -45,17 +41,12 @@ class VectorNode:
         self.vision_control = Vision(self.robot)
         self.event_handler = EventHandler(self.robot)
 
-        # Needs to be async due to continuous publishing
+        # Create async threads due to continuous publishing
         Thread(target=Sensors, args=[self.robot, self.rate]).start()
         Thread(target=LightCube, args=[self.robot, self.rate]).start()
         if camera:
             Thread(target=Camera, args=[self.robot]).start()
 
-    def create_camera_thread(self):
-        Camera(self.robot)
-
-    def create_sensor_thread(self):
-        Sensors(self.robot, self.rate)
 
     def shutdown(self):
         print("Vector Robot shutting down...")

@@ -21,6 +21,7 @@ ROS wrapper and startup code for the Anki Vector robot
 6. Install `cv_bridge` from source for Python 3 with `catkin build` to enable camera functionality. [This Stack Overflow thread](https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3) provides instructions for doing so.
 6. Install this package with `catkin_make install` (from the root of your workspace) or `catkin build anki_vector_ros`.
 7. Run `source ~/catkin_ws/devel/setup.bash`
+8. Run chmod +x <file> on anki_vector_core.py
 8. Launch an instance of the core `vector_ros` node:
 
 ```
